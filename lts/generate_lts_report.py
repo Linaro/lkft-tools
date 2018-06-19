@@ -4,13 +4,13 @@ import requests
 import sys
 
 def usage():
-    print("{} [4.4|4.9|4.14|4.16]".format(sys.argv[0]))
+    print("{} [4.4|4.9|4.14|4.16|4.17]".format(sys.argv[0]))
     sys.exit(1)
 
 if len(sys.argv) < 2:
     usage()
 branch = sys.argv[1]
-if branch not in ['4.4', '4.9', '4.14', '4.16']:
+if branch not in ['4.4', '4.9', '4.14', '4.16', '4.17']:
     usage()
 
 branches = {
@@ -21,6 +21,7 @@ branches = {
     '4.9': ['https://qa-reports.linaro.org/api/projects/23/'],
     '4.14': ['https://qa-reports.linaro.org/api/projects/58/'],
     '4.16': ['https://qa-reports.linaro.org/api/projects/101/'],
+    '4.17': ['https://qa-reports.linaro.org/api/projects/118/'],
 
 }
 
@@ -43,7 +44,7 @@ for i, url in enumerate(branches[branch]):
     if len(branches[branch]) > 1 and i != len(branches[branch])-1:
         # Remove the last 3 line (sig) if there are more reports
         # coming
-        text = '\n'.join(text.split('\n')[:-3])
+        text = '\n'.join(text.split('\n')[:-3]) + "\n"
     report += text
 
 if no_regressions:
