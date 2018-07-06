@@ -4,6 +4,9 @@ import argparse
 import requests
 import sys
 
+# List of possible branches.
+# To add a branch, navigate in browser to
+# https://qa-reports.linaro.org/api/projects/.
 branches = {
     '4.4': [
         'https://qa-reports.linaro.org/api/projects/40/',
