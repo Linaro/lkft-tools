@@ -1,17 +1,8 @@
 #!/bin/env python3
 
+import argparse
 import requests
 import sys
-
-def usage():
-    print("{} [4.4|4.9|4.14|4.16|4.17]".format(sys.argv[0]))
-    sys.exit(1)
-
-if len(sys.argv) < 2:
-    usage()
-branch = sys.argv[1]
-if branch not in ['4.4', '4.9', '4.14', '4.16', '4.17']:
-    usage()
 
 branches = {
     '4.4': [
@@ -20,10 +11,21 @@ branches = {
     ],
     '4.9': ['https://qa-reports.linaro.org/api/projects/23/'],
     '4.14': ['https://qa-reports.linaro.org/api/projects/58/'],
-    '4.16': ['https://qa-reports.linaro.org/api/projects/101/'],
     '4.17': ['https://qa-reports.linaro.org/api/projects/118/'],
-
 }
+branch_help = '['+'|'.join(branches.keys())+']'
+
+parser = argparse.ArgumentParser()
+parser.add_argument("branch", help=branch_help)
+parser.add_argument("--force-good",
+    help="Force report of 'no regressions'",
+    action="store_true")
+args = parser.parse_args()
+
+force_good = args.force_good
+branch = args.branch
+if branch not in branches:
+    sys.exit("Invalid branch specified")
 
 report = ""
 no_regressions = True
@@ -47,7 +49,7 @@ for i, url in enumerate(branches[branch]):
         text = '\n'.join(text.split('\n')[:-3]) + "\n"
     report += text
 
-if no_regressions:
+if no_regressions or force_good:
     report = (
 """Results from Linaro’s test farm.
 No regressions on arm64, arm and x86_64.
