@@ -15,6 +15,7 @@ branches = {
     '4.9': ['https://qa-reports.linaro.org/api/projects/23/'],
     '4.14': ['https://qa-reports.linaro.org/api/projects/58/'],
     '4.17': ['https://qa-reports.linaro.org/api/projects/118/'],
+    '4.18': ['https://qa-reports.linaro.org/api/projects/133/'],
 }
 branch_help = '['+'|'.join(branches.keys())+']'
 
