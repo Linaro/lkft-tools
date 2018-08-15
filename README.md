@@ -5,3 +5,4 @@
 * [Create and send a patch](docs/create-and-send-a-patch.md)
 * [LTS backporting](docs/lts-backporting.md)
 * [New Linux Branch](docs/new-stable-branch.md)
+* [generate_lts_report.py](docs/generate_lts_report.py)

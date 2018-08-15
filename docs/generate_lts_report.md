@@ -1,7 +1,3 @@
-# LKFT LTS Tools
-
-This directory contains tools related to testing LTS branches.
-
 ## generate_lts_report.py usage
 
 generate_lts_report.py by default takes a branch as an argument (i.e. 4.4, 4.9,
