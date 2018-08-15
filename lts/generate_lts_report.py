@@ -23,9 +23,19 @@ parser.add_argument("branch", help=branch_help)
 parser.add_argument("--force-good",
     help="Force report of 'no regressions'",
     action="store_true")
+parser.add_argument("--unfinished",
+    help="Report even if build is unfinished'",
+    action="store_true")
+parser.add_argument("--baseline",
+    help="Use build ID as baseline")
+parser.add_argument("--build",
+    help="Use build ID instead of latest")
 args = parser.parse_args()
 
 force_good = args.force_good
+unfinished = args.unfinished
+baseline = args.baseline
+build = args.build
 branch = args.branch
 if branch not in branches:
     sys.exit("Invalid branch specified")
@@ -33,15 +43,27 @@ if branch not in branches:
 report = ""
 no_regressions = True
 for i, url in enumerate(branches[branch]):
+
     r = requests.get(url+'builds')
-    result = r.json()['results'][0]
+    if build:
+        for result in r.json()['results']:
+            if int(result['id']) == int(build):
+                break
+        else:
+            sys.exit("Build {} not found".format(build))
+    else:
+        result = r.json()['results'][0]
 
     # Check status, make sure it is finished
     r = requests.get(result['status'])
     status = r.json()
-    assert status['finished'], "ERROR: Build {} not yet Finished".format(url)
+    if not (status['finished'] or unfinished):
+        sys.exit( "ERROR: Build {}({}) not yet Finished. Pass --unfinished to force a report.".format(result['id'], result['version']))
 
-    r = requests.get(result['url']+'email?template=9')
+    url = result['url']+'email?template=9'
+    if baseline and i==0: # don't support specifying a baseline for the second build (like 4.4 hikey)
+        url = url+"&baseline={}".format(baseline)
+    r = requests.get(url)
     text = r.text
     if "Regressions" in text:
         no_regressions = False
