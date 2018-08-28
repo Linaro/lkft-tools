@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import re
 import requests
 import sys
 
@@ -33,6 +34,62 @@ parser.add_argument("--build",
     help="Use build ID instead of latest")
 args = parser.parse_args()
 
+def extract_version_info(version):
+    """
+        IN: version="v4.18.4-23-gc456dc1ec5f9"
+        OUT: (4, 18, 4, 23, gc456dc1ec5f9)
+
+        IN: version="v4.18.4"
+        OUT: (4, 18, 4, None, None)
+    """
+    pattern = re.compile(r'v(\d+)\.(\d+)\.(\d+)-?(\d+)?-?(\w+)?')
+    match = pattern.match(version)
+    return(match.group(1), match.group(2), match.group(3),
+           match.group(4), match.group(5))
+
+def detect_baseline(build_result, builds_url):
+    """
+        Given a build and a build url, find the baseline
+
+        The baseline is found by looking at the 'version' field in
+        build_result, and looking through previous builds such that:
+
+        Given the following list of versions:
+            v4.18.5
+            v4.18.4-23-gc456dc1ec5f9
+            v4.18.4-13-g2a9a12ddb3b0
+            v4.18.4-7-ga00ca2e5e60b
+            v4.18.3-36-g28b2837b7236
+            v4.18.3-36-g1b2dc862d5f3
+            v4.18.3
+
+        The following IN -> OUT should be returned:
+            v4.18.5 -> v4.18.3-36-g28b2837b7236
+            v4.18.4-23-gc456dc1ec5f9 -> v4.18.3-36-g28b2837b7236
+            v4.18.3-36-g28b2837b7236 -> v4.18.3
+
+    """
+    (current_major, current_minor, current_patch, current_patch_count, current_sha) = extract_version_info(build_result['version'])
+
+    # Current version is a release tag if current_patch is None
+    current_is_release = current_patch_count is None
+
+    # Find the previous release, or, where patch number decriments in the event
+    # there was not a tagged release.
+    r = requests.get(builds_url)
+    for build in r.json()['results'][1:]:
+        (build_major, build_minor, build_patch, build_patch_count, build_sha) = extract_version_info(build['version'])
+        if build_patch_count is None:
+            # Release version is found
+            return build['id']
+        elif current_is_release and int(build_patch) == int(current_patch)-2:
+            return build['id']
+        elif (not current_is_release) and int(build_patch) == int(current_patch)-1:
+            return build['id']
+
+    sys.exit("Baseline not found")
+
+
 force_good = args.force_good
 unfinished = args.unfinished
 baseline = args.baseline
@@ -45,26 +102,36 @@ report = ""
 no_regressions = True
 for i, url in enumerate(branches[branch]):
 
-    r = requests.get(url+'builds')
+    builds_url = url+'builds'
+    r = requests.get(builds_url)
     if build:
-        for result in r.json()['results']:
-            if int(result['id']) == int(build):
+        for build_result in r.json()['results']:
+            if int(build_result['id']) == int(build):
                 break
         else:
             sys.exit("Build {} not found".format(build))
     else:
-        result = r.json()['results'][0]
+        build_result = r.json()['results'][0]
 
     # Check status, make sure it is finished
-    r = requests.get(result['status'])
+    r = requests.get(build_result['status'])
     status = r.json()
     if not (status['finished'] or unfinished):
-        sys.exit( "ERROR: Build {}({}) not yet Finished. Pass --unfinished to force a report.".format(result['id'], result['version']))
+        sys.exit( "ERROR: Build {}({}) not yet Finished. Pass --unfinished to force a report.".format(build_result['id'], build_result['version']))
 
-    url = result['url']+'email?template=9'
-    if baseline and i==0: # don't support specifying a baseline for the second build (like 4.4 hikey)
-        url = url+"&baseline={}".format(baseline)
-    r = requests.get(url)
+    template_url = build_result['url']+'email?template=9'
+    if baseline:
+        template_url = template_url+"&baseline={}".format(baseline)
+    else:
+        try:
+            baseline = detect_baseline(build_result, builds_url)
+            template_url = template_url+"&baseline={}".format(baseline)
+        except AttributeError:
+            # hikey doesn't work with detect_baseline; the regex match
+            # will fail
+            pass
+
+    r = requests.get(template_url)
     text = r.text
     if "Regressions" in text:
         no_regressions = False
