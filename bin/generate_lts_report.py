@@ -141,7 +141,7 @@ if __name__ == "__main__":
     if no_regressions or force_good:
         report = (
 """Results from Linaro’s test farm.
-No regressions on arm64, arm and x86_64.
+No regressions on arm64, arm, x86_64, and i386.
 
 """ + report)
     else:
