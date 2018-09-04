@@ -1,15 +1,14 @@
+import re
 import requests
 
-def get_branches():
+def get_projects_by_branch():
     return {
-        '4.4': [
-            'https://qa-reports.linaro.org/api/projects/40/',
-            'https://qa-reports.linaro.org/api/projects/34/',
-        ],
-        '4.9': ['https://qa-reports.linaro.org/api/projects/23/'],
-        '4.14': ['https://qa-reports.linaro.org/api/projects/58/'],
-        '4.17': ['https://qa-reports.linaro.org/api/projects/118/'],
-        '4.18': ['https://qa-reports.linaro.org/api/projects/133/'],
+        '4.4': 'https://qa-reports.linaro.org/api/projects/40/',
+        '4.4-hikey': 'https://qa-reports.linaro.org/api/projects/34/',
+        '4.9': 'https://qa-reports.linaro.org/api/projects/23/',
+        '4.14': 'https://qa-reports.linaro.org/api/projects/58/',
+        '4.17': 'https://qa-reports.linaro.org/api/projects/118/',
+        '4.18': 'https://qa-reports.linaro.org/api/projects/133/',
     }
 
 

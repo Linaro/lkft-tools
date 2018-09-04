@@ -9,6 +9,8 @@ import sys
 sys.path.append(os.path.join(sys.path[0],'../','lib'))
 import squad_client
 
+from urllib.parse import urljoin
+
 def extract_version_info(version):
     """
         IN: version="v4.18.4-23-gc456dc1ec5f9"
@@ -65,12 +67,55 @@ def detect_baseline(build_result, builds_url):
     sys.exit("Baseline not found")
 
 
+def get_build_report(project_url, unfinished=False,
+                     baseline=None, build=None):
+    """ Given a project URL, return a test report """
+
+
+    report = ""
+    builds_url = urljoin(project_url, 'builds')
+    r = requests.get(builds_url)
+    if build:
+        for build_result in r.json()['results']:
+            if int(build_result['id']) == int(build):
+                break
+        else:
+            sys.exit("Build {} not found".format(build))
+    else:
+        build_result = r.json()['results'][0]
+
+    # Check status, make sure it is finished
+    r = requests.get(build_result['status'])
+    status = r.json()
+    if not (status['finished'] or unfinished):
+        sys.exit( "ERROR: Build {}({}) not yet Finished. Pass --unfinished to force a report.".format(build_result['id'], build_result['version']))
+
+    template_url = build_result['url']+'email?template=9'
+    if baseline:
+        template_url = template_url+"&baseline={}".format(baseline)
+    else:
+        try:
+            baseline = detect_baseline(build_result, builds_url)
+            template_url = template_url+"&baseline={}".format(baseline)
+        except AttributeError:
+            # hikey doesn't work with detect_baseline; the regex match
+            # will fail
+            pass
+
+    r = requests.get(template_url)
+    return r.text
+
 if __name__ == "__main__":
     # List of possible branches.
     # To add a branch, navigate in browser to
     # https://qa-reports.linaro.org/api/projects/.
-    branches = squad_client.get_branches()
-    branch_help = '['+'|'.join(branches.keys())+']'
+    projects = squad_client.get_projects_by_branch()
+    available_branches = projects.keys()
+    # 4.4-hikey is automatically included when 4.4 is used. Remove it
+    # for purposes of usage.
+    branch_help = '['+'|'.join(
+            [x for x in available_branches if x != '4.4-hikey']
+        )+']'
 
     parser = argparse.ArgumentParser()
     parser.add_argument("branch", help=branch_help)
@@ -91,54 +136,25 @@ if __name__ == "__main__":
     baseline = args.baseline
     build = args.build
     branch = args.branch
-    if branch not in branches:
+    if branch not in available_branches:
         sys.exit("Invalid branch specified")
 
     report = ""
-    no_regressions = True
-    for i, url in enumerate(branches[branch]):
+    report = get_build_report(projects[branch], unfinished=unfinished,
+                              baseline=baseline, build=build)
 
-        builds_url = url+'builds'
-        r = requests.get(builds_url)
-        if build:
-            for build_result in r.json()['results']:
-                if int(build_result['id']) == int(build):
-                    break
-            else:
-                sys.exit("Build {} not found".format(build))
-        else:
-            build_result = r.json()['results'][0]
+    if branch == '4.4':
 
-        # Check status, make sure it is finished
-        r = requests.get(build_result['status'])
-        status = r.json()
-        if not (status['finished'] or unfinished):
-            sys.exit( "ERROR: Build {}({}) not yet Finished. Pass --unfinished to force a report.".format(build_result['id'], build_result['version']))
+        # In the case of 4.4, also get 4.4-hikey
 
-        template_url = build_result['url']+'email?template=9'
-        if baseline:
-            template_url = template_url+"&baseline={}".format(baseline)
-        else:
-            try:
-                baseline = detect_baseline(build_result, builds_url)
-                template_url = template_url+"&baseline={}".format(baseline)
-            except AttributeError:
-                # hikey doesn't work with detect_baseline; the regex match
-                # will fail
-                pass
+        # Remove the last 3 line (sig) if there are more reports
+        # coming
+        report = '\n'.join(report.split('\n')[:-3]) + "\n"
 
-        r = requests.get(template_url)
-        text = r.text
-        if "Regressions" in text:
-            no_regressions = False
+        report += get_build_report(projects['4.4-hikey'],
+              unfinished=unfinished, baseline=baseline, build=build)
 
-        if len(branches[branch]) > 1 and i != len(branches[branch])-1:
-            # Remove the last 3 line (sig) if there are more reports
-            # coming
-            text = '\n'.join(text.split('\n')[:-3]) + "\n"
-        report += text
-
-    if no_regressions or force_good:
+    if "Regressions" not in report or force_good:
         report = (
 """Results from Linaro’s test farm.
 No regressions on arm64, arm, x86_64, and i386.
@@ -152,4 +168,3 @@ Regressions detected.
 """ + report)
 
     print(report)
-
