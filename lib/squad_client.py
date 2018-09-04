@@ -1,5 +1,18 @@
 import requests
 
+def get_branches():
+    return {
+        '4.4': [
+            'https://qa-reports.linaro.org/api/projects/40/',
+            'https://qa-reports.linaro.org/api/projects/34/',
+        ],
+        '4.9': ['https://qa-reports.linaro.org/api/projects/23/'],
+        '4.14': ['https://qa-reports.linaro.org/api/projects/58/'],
+        '4.17': ['https://qa-reports.linaro.org/api/projects/118/'],
+        '4.18': ['https://qa-reports.linaro.org/api/projects/133/'],
+    }
+
+
 def get_objects(endpoint_url, expect_one=False, parameters={}):
     """
     gets list of objects from endpoint_url
@@ -26,4 +39,10 @@ def get_objects(endpoint_url, expect_one=False, parameters={}):
                 return ret_obj
         else:
             return objs
+
+
+class Build(object):
+    def __init__(self, build_url):
+        self.build = get_objects(build_url)
+        self.build_metadata = get_objects(self.build['metadata'])
 
