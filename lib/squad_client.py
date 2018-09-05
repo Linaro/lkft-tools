@@ -8,6 +8,7 @@ def get_projects_by_branch():
         '4.9': 'https://qa-reports.linaro.org/api/projects/23/',
         '4.14': 'https://qa-reports.linaro.org/api/projects/58/',
         '4.18': 'https://qa-reports.linaro.org/api/projects/133/',
+        '4.19': 'https://qa-reports.linaro.org/api/projects/22/', #mainline
     }
 
 
@@ -38,6 +39,22 @@ def get_objects(endpoint_url, expect_one=False, parameters={}):
         else:
             return objs
 
+class Builds(object):
+    def __init__(self, builds_url):
+        self.builds_url = builds_url
+
+    def __iter__(self):
+        obj_r = requests.get(self.builds_url)
+        objs = obj_r.json()
+        while True:
+            for obj in objs['results']:
+                yield obj
+            if objs['next'] is None:
+                break
+            else:
+                obj_r = requests.get(objs['next'])
+                if obj_r.status_code == 200:
+                    objs = obj_r.json()
 
 class Build(object):
     def __init__(self, build_url):
