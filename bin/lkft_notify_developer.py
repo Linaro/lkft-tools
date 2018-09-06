@@ -10,8 +10,6 @@ from pprint import pprint
 sys.path.append(os.path.join(sys.path[0],'../','lib'))
 import squad_client
 
-from urllib.parse import urljoin
-
 def get_branch_from_make_kernelversion(make_kernelversion):
     """
         IN: "4.4.118"
@@ -46,10 +44,10 @@ def get_build_report(build_url):
 
     # Get baseline
     baseline_project_url = squad_client.get_projects_by_branch()[baseline_branch]
-    baseline_builds_url = urljoin(baseline_project_url, "builds")
+    baseline_builds_url = baseline_project_url + "builds"
     baseline_build = get_most_recent_release(baseline_builds_url)
 
-    template_url = urljoin(build_url, 'email')
+    template_url = build_url + 'email'
     parameters = {
         'baseline': baseline_build['id'],
         'template': '9',
