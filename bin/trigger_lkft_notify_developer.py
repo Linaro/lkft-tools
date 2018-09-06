@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import datetime
 import os
 import requests
 import sys
@@ -12,6 +13,9 @@ import lkft_notify_developer
 
 BUILDS_URL = "https://qa-reports.linaro.org/api/projects/131/builds/"
 STATE_FILE = "/var/tmp/trigger_lkft_notify_developer.notified"
+
+# Disregard builds older than MAX_AGE_DAYS
+MAX_AGE_DAYS = 7
 
 def get_notified_builds(state_file):
     """ Return a list of build ids that have already been notified """
@@ -38,10 +42,23 @@ if __name__ == "__main__":
     for build in builds:
         if build['id'] in notified_builds:
             # Skip builds that have already been notified
+            print("Build {}:{} already notified".format(
+                build['id'], build['version']))
             continue
         if not build['finished']:
             # Skip incomplete builds
+            print("Build {}:{} not yet finished".format(
+                build['id'], build['version']))
             continue
+        if (datetime.datetime.utcnow() - datetime.timedelta(days=MAX_AGE_DAYS) >
+            datetime.datetime.strptime(build['datetime'],
+                                       "%Y-%m-%dT%H:%M:%S.%fZ")):
+            # Stop once builds are older than MAX_AGE_DAYS
+            # This avoids spamming old builds if state file gets removed
+            # It also stops looking for additional builds, saving API requests
+            print("Build {}:{} older than {} days; stopping".format(
+                build['id'], build['version'], MAX_AGE_DAYS))
+            break
 
         # Notify
         print("Notifying {}".format(build['id']))
