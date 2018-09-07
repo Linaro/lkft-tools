@@ -37,6 +37,7 @@ def get_most_recent_release(builds_url):
     # If none found, return first build
     return first_build
 
+
 def get_build_report(build_url):
     build = squad_client.Build(build_url)
     baseline_branch = get_branch_from_make_kernelversion(
@@ -54,15 +55,34 @@ def get_build_report(build_url):
         }
     result = requests.get(template_url, parameters)
 
-    return result.text
+    email = build.build_metadata.get('email-notification', '')
+
+    if "No regressions" in result.text:
+        subject = "{}: no regressions found".format(build.build['version'])
+    else:
+        subject = "{}: regressions detected".format(build.build['version'])
+
+
+    return (email, subject, result.text)
 
 if __name__ == "__main__":
-
-    # Given a build, generate an email notification using a production baseline.
-    #build_url = "https://qa-reports.linaro.org/api/builds/9143/"
-    #build_url = "https://qa-reports.linaro.org/api/builds/9141/"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("build_url", help="API URL to developer build")
     args = parser.parse_args()
-    print(get_build_report(args.build_url))
+
+
+
+    (email_destination, email_subject, email_body) = get_build_report(
+        args.build_url)
+
+    with open("email.to", 'w') as f:
+        f.write(email_destination)
+    with open("email.subject", 'w') as f:
+        f.write(email_subject)
+    with open("email.body", 'w') as f:
+        f.write(email_body)
+
+    print("TO: {}".format(email_destination))
+    print("SUBJECT: {}".format(email_subject))
+    print("\n{}\n".format(email_body))
