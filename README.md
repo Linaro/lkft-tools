@@ -20,4 +20,5 @@ Documentation for individual tools:
 ## Workflows
 
 * [Local ci.linaro.org development](docs/local-ci-linaro-org.md)
+* [LKFT Developer Builder](docs/developer-builder.md)
 
