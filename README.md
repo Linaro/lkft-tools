@@ -16,3 +16,8 @@ Documentation for individual tools:
 
 * [generate_lts_report.py](docs/generate_lts_report.md)
 * [cancel_squad_testjobs.py](docs/cancel_squad_testjobs.md)
+
+## Workflows
+
+* [Local ci.linaro.org development](docs/local-ci-linaro-org.md)
+
