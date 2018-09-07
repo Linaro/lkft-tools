@@ -62,8 +62,10 @@ if __name__ == "__main__":
 
         # Notify
         print("Notifying {}".format(build['id']))
-        report = lkft_notify_developer.get_build_report(build['url'])
-        print(report)
+        with open("{}.build_notify_parameters".format(build['id']), "w") as f:
+            f.write("build_url={}".format(build['url']))
+
+        # Record notification in state file
         set_build_notified(STATE_FILE, build['id'])
 
 
