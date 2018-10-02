@@ -54,6 +54,7 @@ def detect_baseline(build_result, builds_url):
     # Find the previous release, or, where patch number decriments in the event
     # there was not a tagged release.
     r = requests.get(builds_url)
+    r.raise_for_status()
     for build in r.json()['results'][1:]:
         (build_major, build_minor, build_patch, build_patch_count, build_sha) = extract_version_info(build['version'])
         if build_patch_count is None:
@@ -75,6 +76,7 @@ def get_build_report(project_url, unfinished=False,
     report = ""
     builds_url = urljoin(project_url, 'builds')
     r = requests.get(builds_url)
+    r.raise_for_status()
     if build:
         for build_result in r.json()['results']:
             if int(build_result['id']) == int(build):
@@ -86,6 +88,7 @@ def get_build_report(project_url, unfinished=False,
 
     # Check status, make sure it is finished
     r = requests.get(build_result['status'])
+    r.raise_for_status()
     status = r.json()
     if not (status['finished'] or unfinished):
         sys.exit( "ERROR: Build {}({}) not yet Finished. Pass --unfinished to force a report.".format(build_result['id'], build_result['version']))
@@ -103,6 +106,7 @@ def get_build_report(project_url, unfinished=False,
             pass
 
     r = requests.get(template_url)
+    r.raise_for_status()
     return r.text
 
 if __name__ == "__main__":
