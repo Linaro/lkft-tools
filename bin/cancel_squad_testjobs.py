@@ -13,7 +13,14 @@ from pprint import pprint
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Cancel LAVA jobs')
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description="Cancel LAVA jobs from a specific SQUAD build.",
+        epilog=
+'''
+Example usage:
+    cancel_squad_testjobs.py --project-slug linux-stable-rc-4.14-oe --squad-url https://qa-reports.linaro.org --build-version v4.14.74-95-gfaf5aa2247a7
+''')
     parser.add_argument('--project-slug',
         dest='project_slug',
         required=True,
