@@ -90,7 +90,7 @@ def get_build_report(project_url, unfinished=False,
     r = requests.get(build_result['status'])
     r.raise_for_status()
     status = r.json()
-    if not (status['finished'] or unfinished):
+    if not (status.get('finished', None) or unfinished):
         sys.exit( "ERROR: Build {}({}) not yet Finished. Pass --unfinished to force a report.".format(build_result['id'], build_result['version']))
 
     template_url = build_result['url']+'email?template=9'
