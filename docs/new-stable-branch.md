@@ -32,3 +32,8 @@ meta-rpb/
   qa-reports
 - Dan Rue, Milosz Wasilewski, or Antonio Tercerio can do this
 - *risk* - only one member of the KV team has privilege to do this.
+
+## Add branch to lkft.linaro.org
+- Add branch to [lkft-website](https://github.com/Linaro/lkft-website)
+- Daniel, Dan, or Rafael can merge this
+- ref: https://github.com/Linaro/lkft-website/pull/66
