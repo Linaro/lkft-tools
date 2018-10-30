@@ -37,3 +37,8 @@ meta-rpb/
 - Add branch to [lkft-website](https://github.com/Linaro/lkft-website)
 - Daniel, Dan, or Rafael can merge this
 - ref: https://github.com/Linaro/lkft-website/pull/66
+
+## Add branch to lkft-tools squad_client list
+- Add branch to lkft-tools lib/squad_client.py
+- Daniel, Dan, or Rafael can merge this
+- ref: https://github.com/Linaro/lkft-tools/commit/a60b68f41fe13224c1710a79e861c910de028a56
