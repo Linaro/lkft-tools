@@ -50,6 +50,7 @@ class Builds(object):
 
     def __iter__(self):
         obj_r = requests.get(self.builds_url)
+        obj_r.raise_for_status()
         objs = obj_r.json()
         while True:
             for obj in objs['results']:
@@ -58,8 +59,8 @@ class Builds(object):
                 break
             else:
                 obj_r = requests.get(objs['next'])
-                if obj_r.status_code == 200:
-                    objs = obj_r.json()
+                obj_r.raise_for_status()
+                objs = obj_r.json()
 
 class Build(object):
     def __init__(self, build_url):

@@ -53,9 +53,7 @@ def detect_baseline(build_result, builds_url):
 
     # Find the previous release, or, where patch number decriments in the event
     # there was not a tagged release.
-    r = requests.get(builds_url)
-    r.raise_for_status()
-    for build in r.json()['results'][1:]:
+    for build in squad_client.Builds(builds_url):
         (build_major, build_minor, build_patch, build_patch_count, build_sha) = extract_version_info(build['version'])
         if build_patch_count is None:
             # Release version is found
@@ -69,24 +67,21 @@ def detect_baseline(build_result, builds_url):
 
 
 def get_build_report(project_url, unfinished=False,
-                     baseline=None, build=None):
+                     baseline=None, build_id=None):
     """ Given a project URL, return a test report """
 
 
     report = ""
-    builds_url = urljoin(project_url, 'builds')
-    r = requests.get(builds_url)
-    r.raise_for_status()
-    if build:
-        for build_result in r.json()['results']:
-            if int(build_result['id']) == int(build):
-                break
-        else:
-            sys.exit("Build {} not found".format(build))
-    else:
-        build_result = r.json()['results'][0]
 
-    # Check status, make sure it is finished
+    builds_url = urljoin(project_url, 'builds')
+    build_result = None
+    for build in squad_client.Builds(builds_url):
+        if int(build['id']) == int(build_id):
+            build_result = build
+            break
+    else:
+        sys.exit("Build {} not found".format(build_id))
+
     r = requests.get(build_result['status'])
     r.raise_for_status()
     status = r.json()
@@ -138,14 +133,14 @@ if __name__ == "__main__":
     force_good = args.force_good
     unfinished = args.unfinished
     baseline = args.baseline
-    build = args.build
+    build_id = args.build
     branch = args.branch
     if branch not in available_branches:
         sys.exit("Invalid branch specified")
 
     report = ""
     report = get_build_report(projects[branch], unfinished=unfinished,
-                              baseline=baseline, build=build)
+                              baseline=baseline, build_id=build_id)
 
     if branch == '4.4':
 
