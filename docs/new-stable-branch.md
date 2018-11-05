@@ -1,44 +1,78 @@
-# Steps to perform when a new linux branch is released
+# Steps to perform when a new Linux branch is released
 
-For example, for creating 4.18-rc:
+This enumerates all actions needed in order to fully enable 4.19.
 
-## Create Jenkins jobs
-- Create 4.18-rc trigger and build
-- Anyone on the team may do this
-- May be merged by Dan Rue or Daniel Díaz
-- ref: https://review.linaro.org/25779
+## When 4.19-rc6 is released...
 
-## Add kernel branch to meta-96boards
-- add kernel for 4.18 and 4.18 RC
-- May be merged by Daniel Díaz or Anders Roxell
-- ref: https://github.com/96boards/meta-96boards/pull/248
+### QA Reports
+- Create project linux-stable-rc-4.19-oe
+- Create project linux-stable-rc-4.19-oe-sanity
+- Create project linux-stable-rc-4.19-oe in staging
+- Can do: Dan Rue, Milosz Wasilewski, or Antonio Tercerio
 
-## Update PV and SRCREV in meta-96boards and meta-rpb
-```
-meta-96boards/ (72f8425e6763fe40f2175a888b020541787e474e)
- recipes-kernel/linux/linux-generic-mainline_git.bb
- recipes-kernel/linux/linux-generic-next_git.bb
-meta-rpb/
- recipes-overlayed/kselftests/kselftests-next_git.bb
- recipes-overlayed/kselftests/kselftests-next_4.17.bb
-```
+References:
+- https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/
+- https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe-sanity/
 
-## Update skiplists
-- Add new branch to kselftest and ltp skiplists in test-definitions
-- ref: https://review.linaro.org/#/c/ci/job/configs/+/25779/
+### Bugzilla
+- Request Bugzilla branch
+- Can do: Anyone on the team
 
-## Add new branch to qa-reports
-- Create linux-stable-rc-4.18-oe and linux-stable-rc-4.18-oe-sanity in
-  qa-reports
-- Dan Rue, Milosz Wasilewski, or Antonio Tercerio can do this
-- *risk* - only one member of the KV team has privilege to do this.
+Reference: https://projects.linaro.org/browse/LSS-206
 
-## Add branch to lkft.linaro.org
+### Jenkins
+- Create 4.19-rc trigger and build (*do not merge*)
+- Can do: Anyone on the team
+
+Reference: https://review.linaro.org/#/c/ci/job/configs/+/28832
+
+## When 4.19 is released...
+
+### meta-96boards
+- Add kernel for 4.19 and 4.19 RC
+- Update PV and SRCREV in Linux mainline and next
+- Can do: Anyone on the team
+- Can merge: Daniel Díaz
+
+Reference: https://github.com/96boards/meta-96boards/pull/278
+
+### meta-rpb
+- Update PV and SRCREV in kselftests next
+- Upgrade kselftests stable (*do not merge*)
+
+References:
+- https://github.com/96boards/meta-rpb/pull/195
+- https://github.com/96boards/meta-rpb/pull/196
+
+### test-definitions
+- Update skiplists
+- Add new branch to kselftest and LTP skiplists
+
+References:
+- https://review.linaro.org/#/c/qa/test-definitions/+/28865/
+- https://review.linaro.org/#/c/qa/test-definitions/+/28866/
+
+### Jenkins
+- Merge 4.19-rc trigger and build
+- Can merge: Anyone on the team
+- Note: Only after all other changes have been merged
+
+### lkft.linaro.org
 - Add branch to [lkft-website](https://github.com/Linaro/lkft-website)
-- Daniel, Dan, or Rafael can merge this
-- ref: https://github.com/Linaro/lkft-website/pull/66
+- Can do: Anyone on the team
+- Can merge: Daniel Díaz, Dan Rue, or Rafael Tinoco
 
-## Add branch to lkft-tools squad_client list
+Reference: https://github.com/Linaro/lkft-website/pull/88
+
+### lkft-tools
 - Add branch to lkft-tools lib/squad_client.py
-- Daniel, Dan, or Rafael can merge this
-- ref: https://github.com/Linaro/lkft-tools/commit/a60b68f41fe13224c1710a79e861c910de028a56
+- Can do: Anyone on the team
+- Can merge: Daniel Díaz, Dan Rue, or Rafael Tinoco
+
+Reference: https://github.com/Linaro/lkft-tools/commit/a60b68f41fe13224c1710a79e861c910de028a56
+
+## Soon after...
+
+### meta-rpb
+- Validate and merge kselftests stable
+- Can merge: Daniel Díaz
