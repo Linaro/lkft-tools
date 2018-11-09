@@ -70,12 +70,15 @@ def get_build_report(project_url, unfinished=False,
                      baseline=None, build_id=None):
     """ Given a project URL, return a test report """
 
-
     report = ""
 
     builds_url = urljoin(project_url, 'builds')
     build_result = None
     for build in squad_client.Builds(builds_url):
+        if not build_id:
+            build_result = build
+            break
+
         if int(build['id']) == int(build_id):
             build_result = build
             break
