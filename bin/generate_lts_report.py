@@ -154,7 +154,7 @@ if __name__ == "__main__":
         report = '\n'.join(report.split('\n')[:-3]) + "\n"
 
         report += get_build_report(projects['4.4-hikey'],
-              unfinished=unfinished, baseline=baseline, build=build)
+              unfinished=unfinished, baseline=baseline, build_id=build_id)
 
     if "Regressions" not in report or force_good:
         report = (
