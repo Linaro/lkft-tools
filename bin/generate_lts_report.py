@@ -5,6 +5,7 @@ import os
 import re
 import requests
 import sys
+import time
 
 sys.path.append(os.path.join(sys.path[0],'../','lib'))
 import squad_client
@@ -67,7 +68,8 @@ def detect_baseline(build_result, builds_url):
 
 
 def get_build_report(project_url, unfinished=False,
-                     baseline=None, build_id=None):
+                     baseline=None, build_id=None,
+                     timeout=120):
     """ Given a project URL, return a test report """
 
     report = ""
@@ -91,7 +93,7 @@ def get_build_report(project_url, unfinished=False,
     if not (status.get('finished', None) or unfinished):
         sys.exit( "ERROR: Build {}({}) not yet Finished. Pass --unfinished to force a report.".format(build_result['id'], build_result['version']))
 
-    template_url = build_result['url']+'email?template=9'
+    template_url = build_result['url']+'report?template=9'
     if baseline:
         template_url = template_url+"&baseline={}".format(baseline)
     else:
@@ -105,7 +107,22 @@ def get_build_report(project_url, unfinished=False,
 
     r = requests.get(template_url)
     r.raise_for_status()
-    return r.text
+    callback_url = r.json()["url"]
+    report = ""
+    for i in range(1, timeout):
+        r = requests.get(callback_url)
+        r.raise_for_status()
+        if r.json()['status_code'] is None:
+            time.sleep(1)
+            continue
+        if r.json()['status_code'] != 200:
+            sys.exit("ERROR generating report: {}".format(r.json()['error_message']))
+        report = r.json()['output_text']
+        break
+    else:
+        sys.exit("ERROR: Waiting timeout exceeded, try again later.")
+
+    return report
 
 if __name__ == "__main__":
     # List of possible branches.
