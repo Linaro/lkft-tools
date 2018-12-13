@@ -69,7 +69,7 @@ def detect_baseline(build_result, builds_url):
 
 def get_build_report(project_url, unfinished=False,
                      baseline=None, build_id=None,
-                     timeout=120):
+                     force_report=False, timeout=120):
     """ Given a project URL, return a test report """
 
     report = ""
@@ -94,6 +94,9 @@ def get_build_report(project_url, unfinished=False,
         sys.exit( "ERROR: Build {}({}) not yet Finished. Pass --unfinished to force a report.".format(build_result['id'], build_result['version']))
 
     template_url = build_result['url']+'report?template=9'
+    if force_report:
+        # Don't return cached report - force the generation of a new one
+        template_url = template_url+"&force=1"
     if baseline:
         template_url = template_url+"&baseline={}".format(baseline)
     else:
@@ -148,6 +151,8 @@ if __name__ == "__main__":
         help="Use build ID as baseline")
     parser.add_argument("--build",
         help="Use build ID instead of latest")
+    parser.add_argument("--force-report", action='store_true', default=False,
+        help="Force a report regeneration from qa-reports")
     args = parser.parse_args()
 
     force_good = args.force_good
@@ -155,12 +160,14 @@ if __name__ == "__main__":
     baseline = args.baseline
     build_id = args.build
     branch = args.branch
+    force_report = args.force_report
     if branch not in available_branches:
         sys.exit("Invalid branch specified")
 
     report = ""
     report = get_build_report(projects[branch], unfinished=unfinished,
-                              baseline=baseline, build_id=build_id)
+                              baseline=baseline, build_id=build_id,
+                              force_report=force_report)
 
     if branch == '4.4':
 
@@ -171,7 +178,8 @@ if __name__ == "__main__":
         report = '\n'.join(report.split('\n')[:-3]) + "\n"
 
         report += get_build_report(projects['4.4-hikey'],
-              unfinished=unfinished, baseline=baseline, build_id=build_id)
+              unfinished=unfinished, baseline=baseline, build_id=build_id,
+              force_report=force_report)
 
     if "Regressions" not in report or force_good:
         report = (
