@@ -13,12 +13,12 @@ class LAVA(object):
     def proxy(self):
         if self.__proxy__ is None:
             url = urlsplit(self.url)
-            endpoint = '%s://%s:%s@%s%s' % (
+            endpoint = "%s://%s:%s@%s%s" % (
                 url.scheme,
                 self.username,
                 self.token,
                 url.netloc,
-                url.path
+                url.path,
             )
             self.__proxy__ = xmlrpclib.ServerProxy(endpoint)
         return self.__proxy__

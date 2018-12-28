@@ -4,7 +4,7 @@ import json
 import os
 import sys
 
-sys.path.append(os.path.join(sys.path[0],'../','lib'))
+sys.path.append(os.path.join(sys.path[0], "../", "lib"))
 from netrcauth import Auth
 from proxy import LAVA
 from squad_client import get_objects
@@ -16,46 +16,59 @@ def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="Cancel LAVA jobs from a specific SQUAD build.",
-        epilog=
-'''
+        epilog="""
 Example usage:
     cancel_squad_testjobs.py --project-slug linux-stable-rc-4.14-oe --squad-url https://qa-reports.linaro.org --build-version v4.14.74-95-gfaf5aa2247a7
-''')
-    parser.add_argument('--project-slug',
-        dest='project_slug',
+""",
+    )
+    parser.add_argument(
+        "--project-slug",
+        dest="project_slug",
         required=True,
-        help='slug of the project which test jobs will be canceled')
-    parser.add_argument('--squad-url',
-        dest='squad_url',
+        help="slug of the project which test jobs will be canceled",
+    )
+    parser.add_argument(
+        "--squad-url",
+        dest="squad_url",
         required=True,
-        help='URL of SQUAD instance in form https://example.com')
-    parser.add_argument('--build-version',
-        dest='build_version',
+        help="URL of SQUAD instance in form https://example.com",
+    )
+    parser.add_argument(
+        "--build-version",
+        dest="build_version",
         required=True,
-        help='Version of the build from which testjobs will be canceled')
+        help="Version of the build from which testjobs will be canceled",
+    )
 
     args = parser.parse_args()
-    params={"slug": args.project_slug}
+    params = {"slug": args.project_slug}
     base_url = args.squad_url + "/api/projects/"
 
     project = get_objects(base_url, True, params)
-    build_list = get_objects(project['builds'], {'version': args.build_version})
+    build_list = get_objects(project["builds"], {"version": args.build_version})
     for build in build_list:
-        if build['version'] != args.build_version:
+        if build["version"] != args.build_version:
             # double check. but also, version filter is broken presently
             continue
 
-        testjobs = get_objects(build['testjobs'])
+        testjobs = get_objects(build["testjobs"])
         for testjob in testjobs:
-            if testjob['job_status'] != 'Submitted':
-                print("Skipping: %s; status: %s" % (testjob['job_id'], testjob['job_status']))
+            if testjob["job_status"] != "Submitted":
+                print(
+                    "Skipping: %s; status: %s"
+                    % (testjob["job_id"], testjob["job_status"])
+                )
                 continue
-            backend = get_objects(testjob['backend'])
-            print("Canceling: %s/scheduler/job/%s" % (backend['url'].replace("/RPC2/",""), testjob['job_id']))
-            a = Auth(backend['url'])
-            l = LAVA(backend['url'], a.username, a.token)
-            c_results = l.proxy.scheduler.cancel_job(testjob['job_id'])
-            pprint (c_results)
+            backend = get_objects(testjob["backend"])
+            print(
+                "Canceling: %s/scheduler/job/%s"
+                % (backend["url"].replace("/RPC2/", ""), testjob["job_id"])
+            )
+            a = Auth(backend["url"])
+            l = LAVA(backend["url"], a.username, a.token)
+            c_results = l.proxy.scheduler.cancel_job(testjob["job_id"])
+            pprint(c_results)
+
 
 if __name__ == "__main__":
     main()

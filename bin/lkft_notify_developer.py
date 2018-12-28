@@ -7,8 +7,9 @@ import requests
 import sys
 from pprint import pprint
 
-sys.path.append(os.path.join(sys.path[0],'../','lib'))
+sys.path.append(os.path.join(sys.path[0], "../", "lib"))
 import squad_client
+
 
 def get_branch_from_make_kernelversion(make_kernelversion):
     """
@@ -17,9 +18,10 @@ def get_branch_from_make_kernelversion(make_kernelversion):
         IN: "4.9.118-rc1"
         OUT: "4.9"
     """
-    pattern = re.compile(r'^(\d+\.\d+).*$')
+    pattern = re.compile(r"^(\d+\.\d+).*$")
     match = pattern.match(make_kernelversion)
     return match.group(1)
+
 
 def get_most_recent_release(builds_url):
     """
@@ -31,7 +33,7 @@ def get_most_recent_release(builds_url):
     for build in squad_client.Builds(builds_url):
         if not first_build:
             first_build = build
-        if build['finished']:
+        if build["finished"]:
             return build
 
     # If none found, return first build
@@ -41,29 +43,27 @@ def get_most_recent_release(builds_url):
 def get_build_report(build_url):
     build = squad_client.Build(build_url)
     baseline_branch = get_branch_from_make_kernelversion(
-            build.build_metadata['make_kernelversion'])
+        build.build_metadata["make_kernelversion"]
+    )
 
     # Get baseline
     baseline_project_url = squad_client.get_projects_by_branch()[baseline_branch]
     baseline_builds_url = baseline_project_url + "builds"
     baseline_build = get_most_recent_release(baseline_builds_url)
 
-    template_url = build_url + 'email'
-    parameters = {
-        'baseline': baseline_build['id'],
-        'template': '9',
-        }
+    template_url = build_url + "email"
+    parameters = {"baseline": baseline_build["id"], "template": "9"}
     result = requests.get(template_url, parameters)
 
-    email = build.build_metadata.get('email-notification', '')
+    email = build.build_metadata.get("email-notification", "")
 
     if "No regressions" in result.text:
-        subject = "{}: no regressions found".format(build.build['version'])
+        subject = "{}: no regressions found".format(build.build["version"])
     else:
-        subject = "{}: regressions detected".format(build.build['version'])
-
+        subject = "{}: regressions detected".format(build.build["version"])
 
     return (email, subject, result.text)
+
 
 if __name__ == "__main__":
 
@@ -71,16 +71,13 @@ if __name__ == "__main__":
     parser.add_argument("build_url", help="API URL to developer build")
     args = parser.parse_args()
 
+    (email_destination, email_subject, email_body) = get_build_report(args.build_url)
 
-
-    (email_destination, email_subject, email_body) = get_build_report(
-        args.build_url)
-
-    with open("email.to", 'w') as f:
+    with open("email.to", "w") as f:
         f.write(email_destination)
-    with open("email.subject", 'w') as f:
+    with open("email.subject", "w") as f:
         f.write(email_subject)
-    with open("email.body", 'w') as f:
+    with open("email.body", "w") as f:
         f.write(email_body)
 
     print("TO: {}".format(email_destination))
