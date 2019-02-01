@@ -9,8 +9,6 @@ import time
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
 import squad_client
 
-from urllib.parse import urljoin
-
 project_url = "https://qa-reports.linaro.org/api/projects/6/" # linux-next-oe
 template_id = "12" # kselftest-specific template
 
@@ -21,7 +19,7 @@ def get_build_report(
 
     report = ""
 
-    builds_url = urljoin(project_url, "builds")
+    builds_url = project_url+"builds"
     build_result = None
     for build in squad_client.Builds(builds_url):
         if not build_id:
