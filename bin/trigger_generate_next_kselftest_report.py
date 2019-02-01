@@ -67,7 +67,7 @@ if __name__ == "__main__":
         # Notify
         print("Notifying {}".format(build["id"]))
         with open("{}.build_notify_parameters".format(build["id"]), "w") as f:
-            f.write("build_id={}".format(build["id"]))
+            f.write("BUILD_ID={}".format(build["id"]))
 
         # Record notification in state file
         set_build_notified(STATE_FILE, build["id"])
