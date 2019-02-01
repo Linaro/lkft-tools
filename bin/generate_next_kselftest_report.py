@@ -64,7 +64,8 @@ def get_build_report(
     else:
         sys.exit("ERROR: Waiting timeout exceeded, try again later.")
 
-    return report
+    subject = '{} kselftest results'.format(build_result["version"])
+    return (subject, report)
 
 
 if __name__ == "__main__":
@@ -86,11 +87,17 @@ if __name__ == "__main__":
     force_report = args.force_report
 
     report = ""
-    report = get_build_report(
+    (email_subject, report) = get_build_report(
         project_url,
         unfinished=unfinished,
         build_id=build_id,
         force_report=force_report,
     )
 
-    print(report)
+    with open("email.subject", "w") as f:
+        f.write(email_subject)
+    with open("email.body", "w") as f:
+        f.write(report)
+
+    print("SUBJECT: {}".format(email_subject))
+    print("\n{}\n".format(report))
