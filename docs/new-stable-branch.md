@@ -1,18 +1,18 @@
 # Steps to perform when a new Linux branch is released
 
-This enumerates all actions needed in order to fully enable 4.19.
+This enumerates all actions needed in order to fully enable 5.0.
 
-## When 4.19-rc6 is released...
+## When 5.0-rc6 is released...
 
 ### QA Reports
-- Create project linux-stable-rc-4.19-oe
-- Create project linux-stable-rc-4.19-oe-sanity
-- Create project linux-stable-rc-4.19-oe in staging
+- Create project linux-stable-rc-5.0-oe
+- Create project linux-stable-rc-5.0-oe-sanity
+- Create project linux-stable-rc-5.0-oe in staging
 - Can do: Dan Rue, Milosz Wasilewski, or Antonio Tercerio
 
 References:
-- https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/
-- https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe-sanity/
+- https://qa-reports.linaro.org/lkft/linux-stable-rc-4.20-oe/
+- https://qa-reports.linaro.org/lkft/linux-stable-rc-4.20-oe-sanity/
 
 ### Bugzilla
 - Request Bugzilla branch
@@ -21,28 +21,26 @@ References:
 Reference: https://projects.linaro.org/browse/LSS-206
 
 ### Jenkins
-- Create 4.19-rc trigger and build (*do not merge*)
+- Create 5.0-rc trigger and build (*do not merge*)
 - Can do: Anyone on the team
 
 Reference: https://review.linaro.org/#/c/ci/job/configs/+/28832
 
-## When 4.19 is released...
+## When 5.0 is released...
 
-### meta-96boards
-- Add kernel for 4.19 and 4.19 RC
+### meta-lkft
+- Add kernel for 5.0 and 5.0 RC
 - Update PV and SRCREV in Linux mainline and next
+- Update PV in kselftests-next
 - Can do: Anyone on the team
-- Can merge: Daniel Díaz
+- Can merge: Daniel Díaz, Dan Rue
 
-Reference: https://github.com/96boards/meta-96boards/pull/278
+Reference: https://github.com/Linaro/meta-lkft/pull/1
 
-### meta-rpb
-- Update PV and SRCREV in kselftests next
-- Upgrade kselftests stable (*do not merge*)
-
-References:
-- https://github.com/96boards/meta-rpb/pull/195
-- https://github.com/96boards/meta-rpb/pull/196
+- Upgrade kselftests-mainline (*do not merge*)
+- Can do: Anyone on the team
+- Can merge: Daniel Díaz, Dan Rue
+Reference: https://github.com/Linaro/meta-lkft/pull/2
 
 ### test-definitions
 - Update skiplists
@@ -53,7 +51,7 @@ References:
 - https://review.linaro.org/#/c/qa/test-definitions/+/28866/
 
 ### Jenkins
-- Merge 4.19-rc trigger and build
+- Merge 5.0-rc trigger and build
 - Can merge: Anyone on the team
 - Note: Only after all other changes have been merged
 
@@ -73,6 +71,6 @@ Reference: https://github.com/Linaro/lkft-tools/commit/a60b68f41fe13224c1710a79e
 
 ## Soon after...
 
-### meta-rpb
-- Validate and merge kselftests stable
+### meta-lkft
+- Validate and merge kselftests-mainline 5.0
 - Can merge: Daniel Díaz
