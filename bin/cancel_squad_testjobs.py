@@ -1,57 +1,42 @@
 #!/usr/bin/env python3
 import argparse
-import json
 import os
+import subprocess
 import sys
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-from netrcauth import Auth
-from proxy import LAVA
-from squad_client import get_objects
-from pprint import pprint
+import squad_client
 
 
-def main():
+def cancel_lava_jobs(url, project, build_version, identity=None):
+    """
+        Requires lavacli. If using a non-default lava identity, specify the identity
+        string in 'identity'.
 
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="Cancel LAVA jobs from a specific SQUAD build.",
-        epilog="""
-Example usage:
-    cancel_squad_testjobs.py --project-slug linux-stable-rc-4.14-oe --squad-url https://qa-reports.linaro.org --build-version v4.14.74-95-gfaf5aa2247a7
-""",
-    )
-    parser.add_argument(
-        "--project-slug",
-        dest="project_slug",
-        required=True,
-        help="slug of the project which test jobs will be canceled",
-    )
-    parser.add_argument(
-        "--squad-url",
-        dest="squad_url",
-        required=True,
-        help="URL of SQUAD instance in form https://example.com",
-    )
-    parser.add_argument(
-        "--build-version",
-        dest="build_version",
-        required=True,
-        help="Version of the build from which testjobs will be canceled",
-    )
+        Given something like the following:
+            url="https://qa-reports.linaro.org"
+            project="linux-stable-rc-4.9-oe"
+            build="v4.9.162-94-g0384d1b03fc9"
 
-    args = parser.parse_args()
-    params = {"slug": args.project_slug}
-    base_url = args.squad_url + "/api/projects/"
+        Discover and cancel all lava jobs that are still running.
 
-    project = get_objects(base_url, True, params)
-    build_list = get_objects(project["builds"], {"version": args.build_version})
+        Note this doesn't handle duplicate project names well..
+    """
+
+    base_url = squad_client.urljoiner(url, "/api/projects/")
+
+    params = {"slug": project}
+    project = squad_client.get_objects(base_url, True, params)[0]
+    build_list = squad_client.get_objects(project["builds"], {"version": build_version})
+    identity_argument = ""
+    if identity:
+        identity_argument = "-i {}".format(identity)
     for build in build_list:
-        if build["version"] != args.build_version:
+        if build["version"] != build_version:
             # double check. but also, version filter is broken presently
             continue
 
-        testjobs = get_objects(build["testjobs"])
+        testjobs = squad_client.get_objects(build["testjobs"])
         for testjob in testjobs:
             if testjob["job_status"] != "Submitted":
                 print(
@@ -59,16 +44,41 @@ Example usage:
                     % (testjob["job_id"], testjob["job_status"])
                 )
                 continue
-            backend = get_objects(testjob["backend"])
-            print(
-                "Canceling: %s/scheduler/job/%s"
-                % (backend["url"].replace("/RPC2/", ""), testjob["job_id"])
+            backend = squad_client.get_objects(testjob["backend"])
+            print("Canceling: %s" % (testjob["job_id"]))
+
+            cmd = "lavacli {} jobs cancel {}".format(
+                identity_argument, testjob["job_id"]
             )
-            a = Auth(backend["url"])
-            l = LAVA(backend["url"], a.username, a.token)
-            c_results = l.proxy.scheduler.cancel_job(testjob["job_id"])
-            pprint(c_results)
+            print(cmd)
+            subprocess.check_call(cmd, shell=True)
 
 
 if __name__ == "__main__":
-    main()
+
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description="Cancel LAVA jobs from a specific SQUAD build.",
+        epilog="""
+Example usage:
+    cancel_squad_testjobs.py "https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.162-94-g0384d1b03fc9/"
+""",
+    )
+    parser.add_argument(
+        "--identity", "-i", dest="identity", default=None, help="lavacli identity"
+    )
+    parser.add_argument("build_url", help="URL of the build")
+
+    args = parser.parse_args()
+
+    try:
+        (
+            url,
+            group,
+            project,
+            build_version,
+        ) = squad_client.get_squad_params_from_build_url(args.build_url)
+    except:
+        sys.exit("Error parsing url: {}".format(args.build_url))
+
+    cancel_lava_jobs(url, project, build_version, args.identity)

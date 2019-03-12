@@ -1,5 +1,7 @@
+import os
 import re
 import requests
+import yaml
 
 
 def get_projects_by_branch():
@@ -17,6 +19,46 @@ def get_projects_by_branch():
         # which branch to use
         "5.1": "https://qa-reports.linaro.org/api/projects/22/",
     }
+
+
+def get_domain_from_url(url):
+    """
+        Given a fully qualified http or https url, return the
+        domain name.
+        IN:
+            https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/
+            https://qa-reports.linaro.org
+            http://qa-reports.linaro.org
+        OUT:
+            qa-reports.linaro.org
+    """
+    return re.match(r"https?://([^/$]*)", url).groups()[0]
+
+
+def get_squad_params_from_build_url(url):
+    """
+        Given a url to a build, return a tuple consisting of
+        (squad-url, group-slug, project-slug, build-version)
+
+        For example:
+        IN:
+            https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.162-94-g0384d1b03fc9/
+        OUT:
+            ('https://qa-reports.linaro.org',
+             'lkft',
+             'linux-stable-rc-4.9-oe',
+             'v4.9.162-94-g0384d1b03fc9'
+            )
+    """
+    return re.match(r"(https?://[^/$]*)/([^/]*)/([^/]*)/build/([^/]*)", url).groups()
+
+
+def urljoiner(*args):
+    """
+    Joins given arguments into an url. Trailing but not leading slashes are
+    stripped for each argument.
+    """
+    return "/".join(map(lambda x: str(x).rstrip("/"), args))
 
 
 def get_objects(endpoint_url, expect_one=False, parameters={}):
