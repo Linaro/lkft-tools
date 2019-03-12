@@ -23,10 +23,13 @@ def cancel_lava_jobs(url, project, build_version, identity=None):
         Note this doesn't handle duplicate project names well..
     """
 
-    base_url = squad_client.urljoiner(url, "/api/projects/")
+    base_url = squad_client.urljoiner(url, "api/projects/")
 
     params = {"slug": project}
-    project = squad_client.get_objects(base_url, True, params)[0]
+    try:
+        project = squad_client.get_objects(base_url, False, params)[0]
+    except:
+        exit("Error: project {} not found at {}".format(project, base_url))
     build_list = squad_client.get_objects(project["builds"], {"version": build_version})
     identity_argument = ""
     if identity:
