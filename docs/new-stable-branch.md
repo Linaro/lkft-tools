@@ -22,6 +22,7 @@ Reference: https://projects.linaro.org/browse/LSS-206
 
 ### Jenkins
 - Create 5.0-rc trigger and build (*do not merge*)
+  - Set job priorities according to [LAVA Job Priorities](lava-job-priority.md)
 - Can do: Anyone on the team
 
 Reference: https://review.linaro.org/#/c/ci/job/configs/+/28832
