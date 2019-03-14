@@ -54,6 +54,8 @@ References:
 - Merge 5.0-rc trigger and build
 - Can merge: Anyone on the team
 - Note: Only after all other changes have been merged
+- Note: Never change sanity job priority
+- Note: For test jobs set the priority as one less than existing priority list
 
 ### lkft.linaro.org
 - Add branch to [lkft-website](https://github.com/Linaro/lkft-website)
@@ -74,3 +76,12 @@ Reference: https://github.com/Linaro/lkft-tools/commit/a60b68f41fe13224c1710a79e
 ### meta-lkft
 - Validate and merge kselftests-mainline 5.0
 - Can merge: Daniel Díaz
+
+### LAVA job priority
+Stable branch names and LAVA job priorities defined as below
+ - stable-rc-4.4 - 78
+ - stable-rc-4.9 - 77
+ - stable-rc-4.14 - 76
+ - stable-rc-4.19 - 75
+ - stable-rc-4.20 - 74
+ - stable-rc-5.0  - 73
