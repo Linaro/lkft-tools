@@ -23,4 +23,5 @@ Documentation for individual tools:
 
 * [Local ci.linaro.org development](docs/local-ci-linaro-org.md)
 * [LKFT Developer Builder](docs/developer-builder.md)
+* [LAVA Job Priorities](docs/lava-job-priority.md)
 
