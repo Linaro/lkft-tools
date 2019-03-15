@@ -25,7 +25,7 @@ requirements, and it fully takes advantage of having 101 priorities available.
 - 75: stable-rc-4.19
 - 74: reserved for 2019 lts kernel (perhaps 5.3?)
 - 73: reserved for 2020 lts kernel (perhaps 5.8?)
-- 72: stable branches which are not lts (e.g. 4.20, 5.0)
+- 72/71: stable branches which are not lts (e.g. 4.20, 5.0)
 - 50: aosp jobs
 - 30: linux-next sanity jobs
 - 25:
