@@ -38,7 +38,7 @@ requirements, and it fully takes advantage of having 101 priorities available.
 A few notes on how the above priorities are decided.
 
 - stable-rc results have strict requirements on turnaround time, and are
-  therefore prioritbbbized above mainline and next.
+  therefore prioritized above mainline and next.
 - aosp jobs take a lot of wall time, and are prioritized between stable and
   next/mainline.
 - -sanity jobs are used for rapid turnaround, and should have the highest
