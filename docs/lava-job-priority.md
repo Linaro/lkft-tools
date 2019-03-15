@@ -57,7 +57,7 @@ audit and observe them is with the following command (output abridged):
 drue@xps:~/src/configs$ grep -A1 PRIORITY *lkft*
 ...
 openembedded-lkft-linux-stable-rc-4.20.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-4.20.yaml-            default: '70'
+openembedded-lkft-linux-stable-rc-4.20.yaml-            default: '72'
 --
 openembedded-lkft-linux-stable-rc-4.20.yaml:            name: SANITY_LAVA_JOB_PRIORITY
 openembedded-lkft-linux-stable-rc-4.20.yaml-            default: '80'
@@ -75,7 +75,7 @@ openembedded-lkft-linux-stable-rc-4.9.yaml:            name: SANITY_LAVA_JOB_PRI
 openembedded-lkft-linux-stable-rc-4.9.yaml-            default: '80'
 --
 openembedded-lkft-linux-stable-rc-5.0.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-5.0.yaml-            default: '70'
+openembedded-lkft-linux-stable-rc-5.0.yaml-            default: '71'
 --
 openembedded-lkft-linux-stable-rc-5.0.yaml:            name: SANITY_LAVA_JOB_PRIORITY
 openembedded-lkft-linux-stable-rc-5.0.yaml-            default: '80'
