@@ -28,18 +28,14 @@ import squad_client
 from urllib.parse import urljoin
 
 
-def report(days, branch, builds):
+def get_test_count(days, builds):
     test_count = 0
     for build in builds:
         status = squad_client.get_objects(build["status"], expect_one=True)
         test_count += (
             status["tests_pass"] + status["tests_fail"] + status["tests_xfail"]
         )
-    print(
-        "Ran {} tests on {} builds on branch {} in the last {} days.".format(
-            test_count, len(builds), branch, days
-        )
-    )
+    return test_count
 
 
 def get_project_name(project_url):
@@ -60,6 +56,8 @@ if __name__ == "__main__":
 
     branches = squad_client.get_projects_by_branch()
 
+    test_count_total = 0
+    build_count_total = 0
     for branch, branch_url in branches.items():
         builds_url = urljoin(branch_url, "builds")
         builds_to_report = []
@@ -69,4 +67,17 @@ if __name__ == "__main__":
             ) > datetime.datetime.strptime(build["datetime"], "%Y-%m-%dT%H:%M:%S.%fZ"):
                 break
             builds_to_report.append(build)
-        report(days, get_project_name(branch_url), builds_to_report)
+        test_count = get_test_count(days, builds_to_report)
+        test_count_total += test_count
+        build_count_total += len(builds_to_report)
+        print(
+            "Ran {} tests on {} builds on branch {} in the last {} days.".format(
+                test_count, len(builds_to_report), get_project_name(branch_url), days
+            )
+        )
+
+    print(
+        "Ran {} total tests on {} builds in the last {} days.".format(
+            test_count_total, build_count_total, days
+        )
+    )
