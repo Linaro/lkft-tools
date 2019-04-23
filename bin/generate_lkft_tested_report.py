@@ -30,12 +30,14 @@ from urllib.parse import urljoin
 
 def get_test_count(days, builds):
     test_count = 0
+    test_run_count = 0
     for build in builds:
         status = squad_client.get_objects(build["status"], expect_one=True)
+        test_run_count += status.get("test_runs_total", 0)
         test_count += (
             status["tests_pass"] + status["tests_fail"] + status["tests_xfail"]
         )
-    return test_count
+    return {'test_count': test_count, 'test_run_count': test_run_count}
 
 
 def get_project_name(project_url):
@@ -57,6 +59,7 @@ if __name__ == "__main__":
     branches = squad_client.get_projects_by_branch()
 
     test_count_total = 0
+    test_run_total = 0
     build_count_total = 0
     for branch, branch_url in branches.items():
         builds_url = urljoin(branch_url, "builds")
@@ -67,17 +70,18 @@ if __name__ == "__main__":
             ) > datetime.datetime.strptime(build["datetime"], "%Y-%m-%dT%H:%M:%S.%fZ"):
                 break
             builds_to_report.append(build)
-        test_count = get_test_count(days, builds_to_report)
-        test_count_total += test_count
+        test_counts = get_test_count(days, builds_to_report)
+        test_count_total += test_counts['test_count']
+        test_run_total += test_counts['test_run_count']
         build_count_total += len(builds_to_report)
         print(
-            "Ran {} tests on {} builds on branch {} in the last {} days.".format(
-                test_count, len(builds_to_report), get_project_name(branch_url), days
+            "Ran {} tests on {} kernel versions on branch {} in the last {} days.".format(
+                test_counts['test_count'], len(builds_to_report), get_project_name(branch_url), days
             )
         )
 
     print(
-        "Ran {} total tests on {} builds in the last {} days.".format(
-            test_count_total, build_count_total, days
+        "Ran {} total tests on {} kernel versions in {} LAVA jobs in the last {} days.".format(
+            test_count_total, build_count_total, test_run_total, days
         )
     )
