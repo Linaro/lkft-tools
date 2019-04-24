@@ -10,6 +10,8 @@ def get_projects_by_branch():
         "4.4-hikey": "https://qa-reports.linaro.org/api/projects/34/",
         "4.9": "https://qa-reports.linaro.org/api/projects/23/",
         "4.14": "https://qa-reports.linaro.org/api/projects/58/",
+        '4.17': 'https://qa-reports.linaro.org/api/projects/118/',
+        "4.18": "https://qa-reports.linaro.org/api/projects/133/",
         "4.19": "https://qa-reports.linaro.org/api/projects/135/",
         "4.20": "https://qa-reports.linaro.org/api/projects/141/",
         "5.0": "https://qa-reports.linaro.org/api/projects/159/",
