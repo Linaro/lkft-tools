@@ -41,7 +41,7 @@ def cancel_lava_jobs(url, project, build_version, identity=None):
 
         testjobs = squad_client.get_objects(build["testjobs"])
         for testjob in testjobs:
-            if testjob["job_status"] != "Submitted":
+            if testjob["job_status"] != "Submitted" and testjob["job_status"] is not None:
                 print(
                     "Skipping: %s; status: %s"
                     % (testjob["job_id"], testjob["job_status"])
