@@ -268,9 +268,21 @@ if __name__ == "__main__":
             else:
                 if sla in rclog[ymd]:
                     rclog[ymd][sla].append(linux_ver)
+                else:
+                    rclog[ymd][sla] = [linux_ver]
 
         else:
             print("[%s] %s: No reply yet (%s)" % (ymd, linux_ver, r.get_sla_mark()))
 
     # cheap json
     print(str(rclog).replace("'", '"'))
+
+    # {'2019-08-09': {'<48h': ['4.4.189']}, '2019-08-08': {'<24h': ['5.2.8', '4.19.66', '4.14.138']}}
+    print("")
+    for date, slas in rclog.items():
+        print("### {}".format(date))
+        for sla, releases in slas.items():
+            print("#### {}".format(" ".join(releases)))
+            print("<!-- sla {} {} -->".format(sla, len(releases)))
+            print("- XXX in {}".format(sla))
+        print("")
