@@ -5,7 +5,7 @@ import subprocess
 import sys
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client
+import squad_client  # noqa: E402
 
 
 def cancel_lava_jobs(url, project, build_version, identity=None):
@@ -41,13 +41,15 @@ def cancel_lava_jobs(url, project, build_version, identity=None):
 
         testjobs = squad_client.get_objects(build["testjobs"])
         for testjob in testjobs:
-            if testjob["job_status"] != "Submitted" and testjob["job_status"] is not None:
+            if (
+                testjob["job_status"] != "Submitted"
+                and testjob["job_status"] is not None
+            ):
                 print(
                     "Skipping: %s; status: %s"
                     % (testjob["job_id"], testjob["job_status"])
                 )
                 continue
-            backend = squad_client.get_objects(testjob["backend"])
             print("Canceling: %s" % (testjob["job_id"]))
 
             cmd = "lavacli {} jobs cancel {}".format(

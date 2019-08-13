@@ -6,11 +6,10 @@ import re
 import requests
 import sys
 import time
+from urllib.parse import urljoin
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client
-
-from urllib.parse import urljoin
+import squad_client  # noqa: E402
 
 
 def extract_version_info(version):

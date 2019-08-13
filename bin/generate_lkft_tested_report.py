@@ -24,11 +24,10 @@ import argparse
 import datetime
 import os
 import sys
+from urllib.parse import urljoin
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client
-
-from urllib.parse import urljoin
+import squad_client  # noqa: E402
 
 
 def get_test_count(builds):

@@ -2,14 +2,11 @@
 
 import datetime
 import os
-import requests
 import sys
 import yaml
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client
-
-import lkft_notify_developer
+import squad_client  # noqa: E402
 
 BUILDS_URL = "https://qa-reports.linaro.org/api/projects/6/builds/"
 STATE_FILE = "/var/tmp/trigger_generate_next_kselftest_report.notified"

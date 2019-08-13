@@ -5,10 +5,9 @@ import os
 import re
 import requests
 import sys
-from pprint import pprint
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client
+import squad_client  # noqa: E402
 
 
 def get_branch_from_make_kernelversion(make_kernelversion):

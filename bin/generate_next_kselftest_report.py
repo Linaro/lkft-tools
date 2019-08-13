@@ -7,10 +7,11 @@ import sys
 import time
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client
+import squad_client  # noqa: E402
 
-project_url = "https://qa-reports.linaro.org/api/projects/6/" # linux-next-oe
-template_id = "12" # kselftest-specific template
+project_url = "https://qa-reports.linaro.org/api/projects/6/"  # linux-next-oe
+template_id = "12"  # kselftest-specific template
+
 
 def get_build_report(
     project_url, unfinished=False, build_id=None, force_report=False, timeout=120
@@ -19,7 +20,7 @@ def get_build_report(
 
     report = ""
 
-    builds_url = project_url+"builds"
+    builds_url = project_url + "builds"
     build_result = None
     for build in squad_client.Builds(builds_url):
         if not build_id:
@@ -64,7 +65,7 @@ def get_build_report(
     else:
         sys.exit("ERROR: Waiting timeout exceeded, try again later.")
 
-    subject = '{} kselftest results'.format(build_result["version"])
+    subject = "{} kselftest results".format(build_result["version"])
     return (subject, report)
 
 
@@ -88,10 +89,7 @@ if __name__ == "__main__":
 
     report = ""
     (email_subject, report) = get_build_report(
-        project_url,
-        unfinished=unfinished,
-        build_id=build_id,
-        force_report=force_report,
+        project_url, unfinished=unfinished, build_id=build_id, force_report=force_report
     )
 
     with open("email.subject", "w") as f:
