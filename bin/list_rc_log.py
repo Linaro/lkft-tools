@@ -3,6 +3,7 @@
 import argparse
 import datetime
 import email
+import email.policy
 import subprocess
 import sys
 
@@ -40,6 +41,11 @@ def get_version(m):
     return sub1[sub1.rfind(' ')+1:]
 
 
+def get_email_from_git_ref(ref):
+    email_bytes = subprocess.check_output(["/usr/bin/git", "show", ref])
+    return email.message_from_bytes(email_bytes, policy=email.policy.EmailPolicy(utf8=True))
+
+
 def get_review_requests(dt_limit):
     print("* Looking for review requests after %s..." %
           dt_limit.strftime("%Y-%m-%d %H:%M UTC"))
@@ -49,8 +55,7 @@ def get_review_requests(dt_limit):
         headn = "HEAD~%d:m" % x
 
         # Get the email message proper
-        email_bytes = subprocess.check_output(["/usr/bin/git", "show", headn])
-        msg = email.message_from_bytes(email_bytes)
+        msg = get_email_from_git_ref(headn)
 
         # Limit search
         if is_beyond_time_search(msg, DT_LIMIT):
@@ -75,8 +80,7 @@ def get_review_replies(dt_limit, fg):
         headn = "HEAD~%d:m" % x
 
         # Get the email message proper
-        email_bytes = subprocess.check_output(["/usr/bin/git", "show", headn])
-        msg = email.message_from_bytes(email_bytes)
+        msg = get_email_from_git_ref(headn)
 
         # Limit search
         if is_beyond_time_search(msg, oldest):
