@@ -161,10 +161,8 @@ if __name__ == "__main__":
     # https://qa-reports.linaro.org/api/projects/.
     projects = squad_client.get_projects_by_branch()
     available_branches = projects.keys()
-    # 4.4-hikey is automatically included when 4.4 is used. Remove it
-    # for purposes of usage.
     branch_help = (
-        "[" + "|".join([x for x in available_branches if x != "4.4-hikey"]) + "]"
+        "[" + "|".join(available_branches) + "]"
     )
 
     parser = argparse.ArgumentParser()
@@ -202,22 +200,6 @@ if __name__ == "__main__":
         build_id=build_id,
         force_report=force_report,
     )
-
-    if branch == "4.4":
-
-        # In the case of 4.4, also get 4.4-hikey
-
-        # Remove the last 3 line (sig) if there are more reports
-        # coming
-        report = "\n".join(report.split("\n")[:-3]) + "\n"
-
-        report += get_build_report(
-            projects["4.4-hikey"],
-            unfinished=unfinished,
-            baseline=baseline,
-            build_id=build_id,
-            force_report=force_report,
-        )
 
     if "Regressions" not in report or force_good:
         report = (
