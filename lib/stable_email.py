@@ -120,12 +120,15 @@ class Review(object):
         if self.reply:
             reply_time = msg_get_dt(self.reply)
 
-        # This is a datetime.timedelta
-        diff = reply_time - request_time
-        self.elapsed_time = diff
+            # This is a datetime.timedelta
+            diff = reply_time - request_time
+            self.elapsed_time = diff
 
     def get_elapsed_time(self):
         self.calc_elapsed_time()
+
+        if not self.elapsed_time:
+            return None
 
         days = self.elapsed_time.days
         hours = days * 24
@@ -136,6 +139,10 @@ class Review(object):
     def get_sla_mark(self):
         self.calc_elapsed_time()
         et = self.elapsed_time
+
+        if not et:
+            return None
+
         hours = et.seconds / 3600
         if et.days >= 2:
             return ">48h"
