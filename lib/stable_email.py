@@ -5,29 +5,28 @@
 
 import email
 import email.policy
-import subprocess
 
-import dateutil.parser
+import git
 
 
-def is_greg_request(m):
-    if "X-KernelTest-Branch" in m and "in-reply-to" not in m:
-        return True
+def commit_to_email_message(commit):
+    raw_msg = commit.tree["m"].data_stream.read()
+    m = email.message_from_bytes(raw_msg, policy=email.policy.EmailPolicy(utf8=True))
+    return m
+
+
+def is_greg_request(commit):
+    if commit.author.email == "gregkh@linuxfoundation.org":
+        m = commit_to_email_message(commit)
+        if "X-KernelTest-Branch" in m and "in-reply-to" not in m:
+            return m
     return False
 
 
-def is_beyond_time_search(m, limit):
-    dt = msg_get_dt(m)
-    if dt < limit:
+def is_beyond_time_search(commit, limit):
+    if commit.committed_datetime < limit:
         return True
     return False
-
-
-def msg_get_dt(m):
-    if "date" in m:
-        return dateutil.parser.parse(m["date"])
-    else:
-        return None
 
 
 def get_version(m):
@@ -40,13 +39,6 @@ def get_version(m):
     return sub1[sub1.rfind(" ") + 1 :]
 
 
-def get_email_from_git_ref(ref):
-    email_bytes = subprocess.check_output(["/usr/bin/git", "show", ref])
-    return email.message_from_bytes(
-        email_bytes, policy=email.policy.EmailPolicy(utf8=True)
-    )
-
-
 def get_review_requests(dt_limit):
     print(
         "* Looking for review requests after %s..."
@@ -54,40 +46,38 @@ def get_review_requests(dt_limit):
     )
     fg = {}
     x = 0
-    while True:
-        headn = "HEAD~%d:m" % x
+    repo = git.Repo(".")
+    commits = repo.iter_commits("HEAD")
 
-        # Get the email message proper
-        msg = get_email_from_git_ref(headn)
-
+    for commit in commits:
         # Limit search
-        if is_beyond_time_search(msg, dt_limit):
+        if is_beyond_time_search(commit, dt_limit):
             print("Done. Found %d review requests in %d messages." % (len(fg), x))
             break
 
         # Look for Greg's stable RC review requests
-        if is_greg_request(msg):
-            print("Found: %s" % msg["subject"])
-            fg[msg["message-id"]] = {"request": msg}
+        msg = is_greg_request(commit)
+        if msg:
+            print("Found: %s" % commit.summary)
+            fg[msg["message-id"]] = {"request": commit}
         x += 1
 
-    # print(str(fg))
     return fg
 
 
 def get_review_replies(oldest, fg):
     print("* Looking for replies...")
     x = 0
-    while True:
-        headn = "HEAD~%d:m" % x
+    repo = git.Repo(".")
+    commits = repo.iter_commits("HEAD")
 
-        # Get the email message proper
-        msg = get_email_from_git_ref(headn)
-
+    for commit in commits:
         # Limit search
-        if is_beyond_time_search(msg, oldest):
+        if is_beyond_time_search(commit, oldest):
             print("Done. (Looked at %d messages.)" % x)
             break
+
+        msg = commit_to_email_message(commit)
 
         if "in-reply-to" in msg and msg["in-reply-to"] in fg:
             inrt = msg["in-reply-to"]
@@ -96,9 +86,9 @@ def get_review_replies(oldest, fg):
             if "linaro.org" in efrom:
                 print("%d: %s" % (x, efrom))
                 if "replies" in fg[inrt]:
-                    fg[inrt]["replies"].append(msg)
+                    fg[inrt]["replies"].append(commit)
                 else:
-                    fg[inrt]["replies"] = [msg]
+                    fg[inrt]["replies"] = [commit]
 
         x += 1
 
@@ -116,13 +106,12 @@ class Review(object):
         self.reply = reply
 
     def calc_elapsed_time(self):
-        request_time = msg_get_dt(self.request)
+        request_time = self.request.committed_datetime
         if self.reply:
-            reply_time = msg_get_dt(self.reply)
+            reply_time = self.reply.committed_datetime
 
             # This is a datetime.timedelta
-            diff = reply_time - request_time
-            self.elapsed_time = diff
+            self.elapsed_time = reply_time - request_time
 
     def get_elapsed_time(self):
         self.calc_elapsed_time()
@@ -154,7 +143,7 @@ class Review(object):
             return "<8h"
 
     def get_linux_version(self):
-        sub = self.request["subject"]
+        sub = self.request.summary
         if not sub.endswith("-stable review"):
             return None
         if not sub.startswith("["):
@@ -163,21 +152,21 @@ class Review(object):
         return sub1[sub1.rfind(" ") + 1 :]
 
     def get_ymd(self):
-        dt = msg_get_dt(self.request)
-        return dt.strftime("%Y-%m-%d")
+        return self.request.committed_datetime.strftime("%Y-%m-%d")
 
     def get_from(self):
-        return self.reply["from"]
+        return "%s <%s>" % (self.reply.author.name, self.reply.author.email)
 
     def get_id(self):
-        return self.reply["message-id"]
+        msg = commit_to_email_message(self.reply)
+        return msg["message-id"]
 
     def get_regressions_detected(self):
-        mfrom = self.reply["from"]
-        if "linaro.org" not in mfrom:
+        if "linaro.org" not in self.reply.author.email:
             return False
 
-        body = self.reply.get_payload().lower()
+        msg = commit_to_email_message(self.reply)
+        body = msg.get_payload().lower()
         if "no regressions on " in body:
             return False
         else:
