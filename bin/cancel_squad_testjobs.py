@@ -8,10 +8,11 @@ sys.path.append(os.path.join(sys.path[0], "../", "lib"))
 import squad_client  # noqa: E402
 
 
-def cancel_lava_jobs(url, project, build_version, identity=None):
+def cancel_lava_jobs(url, project, build_version, identity=None, dryrun=False):
     """
         Requires lavacli. If using a non-default lava identity, specify the identity
-        string in 'identity'.
+        string in 'identity'. The dryrun option, when True, will print the command
+        to be executed but will not run it.
 
         Given something like the following:
             url="https://qa-reports.linaro.org"
@@ -56,7 +57,8 @@ def cancel_lava_jobs(url, project, build_version, identity=None):
                 identity_argument, testjob["job_id"]
             )
             print(cmd)
-            subprocess.check_call(cmd, shell=True)
+            if not dryrun:
+                subprocess.check_call(cmd, shell=True)
 
 
 if __name__ == "__main__":
@@ -72,6 +74,13 @@ Example usage:
     parser.add_argument(
         "--identity", "-i", dest="identity", default=None, help="lavacli identity"
     )
+    parser.add_argument(
+        "--dry-run",
+        "-n",
+        dest="dryrun",
+        action="store_true",
+        help="Show what jobs would be cancelled",
+    )
     parser.add_argument("build_url", help="URL of the build")
 
     args = parser.parse_args()
@@ -86,4 +95,4 @@ Example usage:
     except:
         sys.exit("Error parsing url: {}".format(args.build_url))
 
-    cancel_lava_jobs(url, project, build_version, args.identity)
+    cancel_lava_jobs(url, project, build_version, args.identity, args.dryrun)
