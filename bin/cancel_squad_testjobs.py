@@ -8,7 +8,13 @@ sys.path.append(os.path.join(sys.path[0], "../", "lib"))
 import squad_client  # noqa: E402
 
 
-def cancel_lava_jobs(url, project, build_version, identity=None):
+class RuntimeConfig(object):
+    def __init__(self, identity=None, dryrun=False):
+        self.identity = identity
+        self.dryrun = dryrun
+
+
+def cancel_lava_jobs(url, project, build_version, runtime_config=None):
     """
         Requires lavacli. If using a non-default lava identity, specify the identity
         string in 'identity'.
@@ -32,8 +38,8 @@ def cancel_lava_jobs(url, project, build_version, identity=None):
         exit("Error: project {} not found at {}".format(project, base_url))
     build_list = squad_client.get_objects(project["builds"], {"version": build_version})
     identity_argument = ""
-    if identity:
-        identity_argument = "-i {}".format(identity)
+    if runtime_config.identity:
+        identity_argument = "-i {}".format(runtime_config.identity)
     for build in build_list:
         if build["version"] != build_version:
             # double check. but also, version filter is broken presently
@@ -56,7 +62,8 @@ def cancel_lava_jobs(url, project, build_version, identity=None):
                 identity_argument, testjob["job_id"]
             )
             print(cmd)
-            subprocess.check_call(cmd, shell=True)
+            if not runtime_config.dryrun:
+                subprocess.check_call(cmd, shell=True)
 
 
 if __name__ == "__main__":
@@ -72,6 +79,7 @@ Example usage:
     parser.add_argument(
         "--identity", "-i", dest="identity", default=None, help="lavacli identity"
     )
+    parser.add_argument("--dry-run", "-n", dest="dryrun", action="store_true", help="Show what jobs would be cancelled")
     parser.add_argument("build_url", help="URL of the build")
 
     args = parser.parse_args()
@@ -86,4 +94,5 @@ Example usage:
     except:
         sys.exit("Error parsing url: {}".format(args.build_url))
 
-    cancel_lava_jobs(url, project, build_version, args.identity)
+    runtime_config = RuntimeConfig(args.identity, args.dryrun)
+    cancel_lava_jobs(url, project, build_version, runtime_config)
