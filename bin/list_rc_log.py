@@ -44,8 +44,8 @@ if __name__ == "__main__":
     # Find oldest review request (will stop next search at this point)
     oldest = NOW
     for msgid in from_greg.keys():
-        msg = from_greg[msgid]["request"]
-        dt = stable_email.msg_get_dt(msg)
+        commit = from_greg[msgid]["request"]
+        dt = commit.committed_datetime
         if dt < oldest:
             oldest = dt
     print("Oldest: %s" % oldest)
@@ -56,9 +56,9 @@ if __name__ == "__main__":
     print("* Computing elapsed time...")
     rclog = {}
     for msgid in from_greg.keys():
-        request_msg = from_greg[msgid]["request"]
+        request_commit = from_greg[msgid]["request"]
 
-        r = stable_email.Review(request_msg, None)
+        r = stable_email.Review(request_commit, None)
         ymd = r.get_ymd()
         linux_ver = r.get_linux_version()
 
