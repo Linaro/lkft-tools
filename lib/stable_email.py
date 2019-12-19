@@ -9,6 +9,7 @@ import email.policy
 
 import git
 
+OLD_MSGS_STREAK = 10
 
 def commit_to_email_message(commit):
     raw_msg = commit.tree["m"].data_stream.read()
@@ -50,9 +51,15 @@ def get_review_requests(dt_limit):
     repo = git.Repo(".")
     commits = repo.iter_commits("HEAD")
 
+    older_streak = 0
     for commit in commits:
         # Limit search
         if is_beyond_time_search(commit, dt_limit):
+            older_streak += 1
+        else:
+            older_streak = 0
+
+        if older_streak >= OLD_MSGS_STREAK:
             print("Done. Found %d review requests in %d messages." % (len(fg), x))
             break
 
@@ -72,9 +79,15 @@ def get_review_replies(oldest, fg):
     repo = git.Repo(".")
     commits = repo.iter_commits("HEAD")
 
+    older_streak = 0
     for commit in commits:
         # Limit search
         if is_beyond_time_search(commit, oldest):
+            older_streak += 1
+        else:
+            older_streak = 0
+
+        if older_streak >= OLD_MSGS_STREAK:
             print("Done. (Looked at %d messages.)" % x)
             break
 
