@@ -51,6 +51,12 @@ def cancel_lava_jobs(url, project, build_version, identity=None, dryrun=False):
                     % (testjob["job_id"], testjob["job_status"])
                 )
                 continue
+
+            # backend 2 is lkft.validation.linaro.org, our home
+            if testjob["backend"] != "https://qa-reports.linaro.org/api/backends/2/":
+                print("Skipping: %s. Remote LAVA server." % testjob["job_id"])
+                continue
+
             print("Canceling: %s" % (testjob["job_id"]))
 
             cmd = "lavacli {} jobs cancel {}".format(
