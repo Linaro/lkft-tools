@@ -8,7 +8,9 @@ sys.path.append(os.path.join(sys.path[0], "../", "lib"))
 import squad_client  # noqa: E402
 
 
-def cancel_lava_jobs(url, project, build_version, identity=None, dryrun=False):
+def cancel_lava_jobs(
+    url, project, build_version, identity=None, dryrun=False, group="lkft"
+):
     """
         Requires lavacli. If using a non-default lava identity, specify the identity
         string in 'identity'. The dryrun option, when True, will print the command
@@ -24,9 +26,19 @@ def cancel_lava_jobs(url, project, build_version, identity=None, dryrun=False):
         Note this doesn't handle duplicate project names well..
     """
 
+    base_url = squad_client.urljoiner(url, "api/groups/")
+
+    params = {"slug": group}
+    try:
+        group_object = squad_client.get_objects(base_url, False, params)[0]
+    except:
+        exit("Error: group {} not found at {}".format(project, base_url))
+
+    group_id = group_object["id"]
+
     base_url = squad_client.urljoiner(url, "api/projects/")
 
-    params = {"slug": project}
+    params = {"slug": project, "group": group_id}
     try:
         project = squad_client.get_objects(base_url, False, params)[0]
     except:
@@ -95,4 +107,4 @@ Example usage:
     except:
         sys.exit("Error parsing url: {}".format(args.build_url))
 
-    cancel_lava_jobs(url, project, build_version, args.identity, args.dryrun)
+    cancel_lava_jobs(url, project, build_version, args.identity, args.dryrun, group)
