@@ -9,12 +9,15 @@ import squad_client  # noqa: E402
 
 
 def cancel_lava_jobs(
-    url, project, build_version, identity=None, dryrun=False, group="lkft"
+    url, project, build_version, environment="All", identity=None, dryrun=False, group="lkft"
 ):
     """
         Requires lavacli. If using a non-default lava identity, specify the identity
         string in 'identity'. The dryrun option, when True, will print the command
         to be executed but will not run it.
+
+        If 'environment' is set, only jobs in the given environment will be
+        cancelled.
 
         Given something like the following:
             url="https://qa-reports.linaro.org"
@@ -54,6 +57,9 @@ def cancel_lava_jobs(
 
         testjobs = squad_client.get_objects(build["testjobs"])
         for testjob in testjobs:
+            if environment != "All":
+                if testjob['environment'] != environment:
+                    continue
             if (
                 testjob["job_status"] != "Submitted"
                 and testjob["job_status"] is not None
@@ -100,6 +106,7 @@ Example usage:
         help="Show what jobs would be cancelled",
     )
     parser.add_argument("build_url", help="URL of the build")
+    parser.add_argument("--environment_name", help="Only cancel jobs with the given environment (board) name. e.g. 'hi6220-hikey'", default="All")
 
     args = parser.parse_args()
 
@@ -113,4 +120,4 @@ Example usage:
     except:
         sys.exit("Error parsing url: {}".format(args.build_url))
 
-    cancel_lava_jobs(url, project, build_version, args.identity, args.dryrun, group)
+    cancel_lava_jobs(url, project, build_version, identity=args.identity, dryrun=args.dryrun, group=group, environment=args.environment_name)
