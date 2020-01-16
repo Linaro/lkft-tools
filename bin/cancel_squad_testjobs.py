@@ -33,7 +33,7 @@ def cancel_lava_jobs(
 
     params = {"slug": group}
     try:
-        group_object = squad_client.get_objects(base_url, False, params)[0]
+        group_object = squad_client.get_objects(base_url, params)[0]
     except:
         exit("Error: group {} not found at {}".format(project, base_url))
 
@@ -43,7 +43,7 @@ def cancel_lava_jobs(
 
     params = {"slug": project, "group": group_id}
     try:
-        project = squad_client.get_objects(base_url, False, params)[0]
+        project = squad_client.get_objects(base_url, params)[0]
     except:
         exit("Error: project {} not found at {}".format(project, base_url))
     build_list = squad_client.get_objects(project["builds"], {"version": build_version})
