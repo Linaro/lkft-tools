@@ -66,7 +66,7 @@ def urljoiner(*args):
     return "/".join(map(lambda x: str(x).rstrip("/"), args))
 
 
-def get_objects(endpoint_url, parameters={}, limit=0):
+def get_objects(endpoint_url, parameters={}, limit=None):
     """
     gets list of objects from endpoint_url
     optional parameters allow for filtering
