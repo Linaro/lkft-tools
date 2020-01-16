@@ -66,24 +66,26 @@ def urljoiner(*args):
     return "/".join(map(lambda x: str(x).rstrip("/"), args))
 
 
-def get_objects(endpoint_url, expect_one=False, parameters={}):
+def get_objects(endpoint_url, parameters={}, limit=0):
     """
     gets list of objects from endpoint_url
     optional parameters allow for filtering
     expect_count
     """
+    if limit:
+        parameters["limit"] = limit
     obj_r = requests.get(endpoint_url, parameters)
     if obj_r.status_code == 200:
         objs = obj_r.json()
         if "count" in objs.keys():
-            if expect_one and objs["count"] == 1:
+            if limit == 1 and objs["count"] == 1:
                 return objs["results"][0]
             else:
                 ret_obj = []
                 while True:
                     for obj in objs["results"]:
                         ret_obj.append(obj)
-                    if objs["next"] is None:
+                    if objs["next"] is None or len(ret_obj) == limit:
                         break
                     else:
                         obj_r = requests.get(objs["next"])

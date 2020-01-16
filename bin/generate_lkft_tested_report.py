@@ -34,7 +34,7 @@ def get_test_count(builds):
     test_count = 0
     test_run_count = 0
     for build in builds:
-        status = squad_client.get_objects(build["status"], expect_one=True)
+        status = squad_client.get_objects(build["status"], limit=1)
         test_run_count += status.get("test_runs_total", 0)
         test_count += (
             status["tests_pass"] + status["tests_fail"] + status["tests_xfail"]
@@ -44,7 +44,7 @@ def get_test_count(builds):
 
 def get_project_name(project_url):
     """ Given a squad project url, return the project name """
-    return squad_client.get_objects(project_url, expect_one=True)["name"]
+    return squad_client.get_objects(project_url, limit=1)["name"]
 
 
 def valid_date_type(arg_date_str):
