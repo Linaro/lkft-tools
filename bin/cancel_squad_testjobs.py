@@ -54,7 +54,7 @@ def cancel_lava_jobs(
     except Exception:
         exit("Error: project {} not found at {}".format(project, base_url))
     build_list = lkft_squad_client.get_objects(
-        project["builds"], {"version": build_version}
+        project["builds"], {"version": build_version}, limit=50
     )
     identity_argument = ""
     if identity:
