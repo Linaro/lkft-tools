@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import datetime
 import os
@@ -6,7 +7,7 @@ import sys
 import yaml
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client  # noqa: E402
+import lkft_squad_client  # noqa: E402
 
 BUILDS_URL = "https://qa-reports.linaro.org/api/projects/131/builds/"
 STATE_FILE = "/var/tmp/trigger_lkft_notify_developer.notified"
@@ -38,7 +39,7 @@ if __name__ == "__main__":
     notified_builds = get_notified_builds(STATE_FILE)
 
     developer_builds_url = BUILDS_URL
-    builds = squad_client.Builds(developer_builds_url)
+    builds = lkft_squad_client.Builds(developer_builds_url)
     for build in builds:
         if build["id"] in notified_builds:
             # Skip builds that have already been notified

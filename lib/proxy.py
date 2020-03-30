@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from xmlrpc import client as xmlrpclib
 from urllib.parse import urlsplit
 

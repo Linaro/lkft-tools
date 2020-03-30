@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 """
     Generate a report for the purposes of jipdate status (for JIRA).
@@ -27,14 +28,14 @@ import sys
 from urllib.parse import urljoin
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client  # noqa: E402
+import lkft_squad_client  # noqa: E402
 
 
 def get_test_count(builds):
     test_count = 0
     test_run_count = 0
     for build in builds:
-        status = squad_client.get_objects(build["status"], limit=1)
+        status = lkft_squad_client.get_objects(build["status"], limit=1)
         test_run_count += status.get("test_runs_total", 0)
         test_count += (
             status["tests_pass"] + status["tests_fail"] + status["tests_xfail"]
@@ -44,14 +45,14 @@ def get_test_count(builds):
 
 def get_project_name(project_url):
     """ Given a squad project url, return the project name """
-    return squad_client.get_objects(project_url, limit=1)["name"]
+    return lkft_squad_client.get_objects(project_url, limit=1)["name"]
 
 
 def valid_date_type(arg_date_str):
     """custom argparse *date* type for user dates values given from the command line"""
     try:
         return datetime.datetime.strptime(arg_date_str, "%Y-%m-%d")
-    except:
+    except Exception:
         print(
             "Given Date ({0}) not valid! Expected format, YYYY-MM-DD!".format(
                 arg_date_str
@@ -73,7 +74,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     date = args.date
 
-    branches = squad_client.get_projects_by_branch()
+    branches = lkft_squad_client.get_projects_by_branch()
 
     test_count_total = 0
     test_run_total = 0
@@ -81,7 +82,7 @@ if __name__ == "__main__":
     for branch, branch_url in branches.items():
         builds_url = urljoin(branch_url, "builds")
         builds_to_report = []
-        for build in squad_client.Builds(builds_url):
+        for build in lkft_squad_client.Builds(builds_url):
             if date > datetime.datetime.strptime(
                 build["datetime"], "%Y-%m-%dT%H:%M:%S.%fZ"
             ):

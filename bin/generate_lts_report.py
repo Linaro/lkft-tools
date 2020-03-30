@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import argparse
 import os
@@ -9,7 +10,7 @@ import time
 from urllib.parse import urljoin
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client  # noqa: E402
+import lkft_squad_client  # noqa: E402
 
 
 def extract_version_info(version):
@@ -66,7 +67,7 @@ def detect_baseline(build_result, builds_url):
 
     # Find the previous release, or, where patch number decriments in the event
     # there was not a tagged release.
-    for build in squad_client.Builds(builds_url):
+    for build in lkft_squad_client.Builds(builds_url):
         (
             build_major,
             build_minor,
@@ -99,7 +100,7 @@ def get_build_report(
 
     builds_url = urljoin(project_url, "builds")
     build_result = None
-    for build in squad_client.Builds(builds_url):
+    for build in lkft_squad_client.Builds(builds_url):
         if not build_id:
             build_result = build
             break
@@ -159,11 +160,9 @@ if __name__ == "__main__":
     # List of possible branches.
     # To add a branch, navigate in browser to
     # https://qa-reports.linaro.org/api/projects/.
-    projects = squad_client.get_projects_by_branch()
+    projects = lkft_squad_client.get_projects_by_branch()
     available_branches = projects.keys()
-    branch_help = (
-        "[" + "|".join(available_branches) + "]"
-    )
+    branch_help = "[" + "|".join(available_branches) + "]"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("branch", help=branch_help)

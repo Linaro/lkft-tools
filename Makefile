@@ -1,4 +1,5 @@
 all: test black flake8
+	@echo "🚀😀👌😍🚀"
 
 test:
 	pytest
