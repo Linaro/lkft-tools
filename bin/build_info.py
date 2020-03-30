@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import argparse
 import os
 import sys
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client  # noqa: E402
+import lkft_squad_client  # noqa: E402
 
 
 def print_build_info(url, build):
@@ -46,29 +47,29 @@ if __name__ == "__main__":
             group,
             project,
             build_version,
-        ) = squad_client.get_squad_params_from_build_url(args.build_url)
-    except:
+        ) = lkft_squad_client.get_squad_params_from_build_url(args.build_url)
+    except Exception:
         sys.exit("Error parsing url: {}".format(args.build_url))
 
     # Determine group ID
-    base_url = squad_client.urljoiner(url, "api/groups/")
+    base_url = lkft_squad_client.urljoiner(url, "api/groups/")
     params = {"slug": group}
     try:
-        group_object = squad_client.get_objects(base_url, params)[0]
-    except:
+        group_object = lkft_squad_client.get_objects(base_url, params)[0]
+    except Exception:
         exit("Error: group {} not found at {}".format(project, base_url))
     group_id = group_object["id"]
 
     # Get builds URL for the given group/project
-    base_url = squad_client.urljoiner(url, "api/projects/")
+    base_url = lkft_squad_client.urljoiner(url, "api/projects/")
     params = {"slug": project, "group": group_id}
     try:
-        project_info = squad_client.get_objects(base_url, params)[0]
-    except:
+        project_info = lkft_squad_client.get_objects(base_url, params)[0]
+    except Exception:
         exit("Error: project {} not found at {}".format(project, base_url))
 
     # Get list of builds for that group/project
-    build_list = squad_client.get_objects(
+    build_list = lkft_squad_client.get_objects(
         project_info["builds"],
         parameters={"version": build_version},
         limit=args.max_builds,

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import argparse
 import datetime
@@ -109,6 +110,6 @@ if __name__ == "__main__":
         print("### {}".format(date))
         for sla, releases in slas.items():
             print("#### {}".format(" ".join(releases)))
-            print("<!-- sla {} {} -->".format(sla.strip('h'), len(releases)))
+            print("<!-- sla {} {} -->".format(sla.strip("h"), len(releases)))
             print("- XXX in {}".format(sla))
         print("")

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import argparse
 import os
@@ -7,7 +8,7 @@ import sys
 import time
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client  # noqa: E402
+import lkft_squad_client  # noqa: E402
 
 project_url = "https://qa-reports.linaro.org/api/projects/6/"  # linux-next-oe
 template_id = "12"  # kselftest-specific template
@@ -22,7 +23,7 @@ def get_build_report(
 
     builds_url = project_url + "builds"
     build_result = None
-    for build in squad_client.Builds(builds_url):
+    for build in lkft_squad_client.Builds(builds_url):
         if not build_id:
             build_result = build
             break

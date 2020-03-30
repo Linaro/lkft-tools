@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # This library is used to parse emails from a public-inbox feed. It is used
 # specifically for the linux stable mailing list

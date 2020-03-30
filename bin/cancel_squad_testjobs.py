@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import argparse
 import os
 import subprocess
 import sys
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client  # noqa: E402
+import lkft_squad_client  # noqa: E402
 
 
 def cancel_lava_jobs(
-    url, project, build_version, environment="All", identity=None, dryrun=False, group="lkft"
+    url,
+    project,
+    build_version,
+    environment="All",
+    identity=None,
+    dryrun=False,
+    group="lkft",
 ):
     """
         Requires lavacli. If using a non-default lava identity, specify the identity
@@ -29,24 +36,26 @@ def cancel_lava_jobs(
         Note this doesn't handle duplicate project names well..
     """
 
-    base_url = squad_client.urljoiner(url, "api/groups/")
+    base_url = lkft_squad_client.urljoiner(url, "api/groups/")
 
     params = {"slug": group}
     try:
-        group_object = squad_client.get_objects(base_url, params)[0]
-    except:
+        group_object = lkft_squad_client.get_objects(base_url, params)[0]
+    except Exception:
         exit("Error: group {} not found at {}".format(project, base_url))
 
     group_id = group_object["id"]
 
-    base_url = squad_client.urljoiner(url, "api/projects/")
+    base_url = lkft_squad_client.urljoiner(url, "api/projects/")
 
     params = {"slug": project, "group": group_id}
     try:
-        project = squad_client.get_objects(base_url, params)[0]
-    except:
+        project = lkft_squad_client.get_objects(base_url, params)[0]
+    except Exception:
         exit("Error: project {} not found at {}".format(project, base_url))
-    build_list = squad_client.get_objects(project["builds"], {"version": build_version})
+    build_list = lkft_squad_client.get_objects(
+        project["builds"], {"version": build_version}
+    )
     identity_argument = ""
     if identity:
         identity_argument = "-i {}".format(identity)
@@ -55,10 +64,10 @@ def cancel_lava_jobs(
             # double check. but also, version filter is broken presently
             continue
 
-        testjobs = squad_client.get_objects(build["testjobs"])
+        testjobs = lkft_squad_client.get_objects(build["testjobs"])
         for testjob in testjobs:
             if environment != "All":
-                if testjob['environment'] != environment:
+                if testjob["environment"] != environment:
                     continue
             if (
                 testjob["job_status"] != "Submitted"
@@ -87,12 +96,13 @@ def cancel_lava_jobs(
 
 if __name__ == "__main__":
 
+    example_url = "https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.162-94-g0384d1b03fc9/"
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="Cancel LAVA jobs from a specific SQUAD build.",
-        epilog="""
+        epilog=f"""
 Example usage:
-    cancel_squad_testjobs.py "https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.162-94-g0384d1b03fc9/"
+    cancel_squad_testjobs.py "{example_url}"
 """,
     )
     parser.add_argument(
@@ -106,7 +116,11 @@ Example usage:
         help="Show what jobs would be cancelled",
     )
     parser.add_argument("build_url", help="URL of the build")
-    parser.add_argument("--environment_name", help="Only cancel jobs with the given environment (board) name. e.g. 'hi6220-hikey'", default="All")
+    parser.add_argument(
+        "--environment_name",
+        help="Only cancel jobs with the given environment (board) name. e.g. 'hi6220-hikey'",
+        default="All",
+    )
 
     args = parser.parse_args()
 
@@ -116,8 +130,16 @@ Example usage:
             group,
             project,
             build_version,
-        ) = squad_client.get_squad_params_from_build_url(args.build_url)
-    except:
+        ) = lkft_squad_client.get_squad_params_from_build_url(args.build_url)
+    except Exception:
         sys.exit("Error parsing url: {}".format(args.build_url))
 
-    cancel_lava_jobs(url, project, build_version, identity=args.identity, dryrun=args.dryrun, group=group, environment=args.environment_name)
+    cancel_lava_jobs(
+        url,
+        project,
+        build_version,
+        identity=args.identity,
+        dryrun=args.dryrun,
+        group=group,
+        environment=args.environment_name,
+    )

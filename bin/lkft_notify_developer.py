@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import argparse
 import os
@@ -7,7 +8,7 @@ import requests
 import sys
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
-import squad_client  # noqa: E402
+import lkft_squad_client  # noqa: E402
 
 
 def get_branch_from_make_kernelversion(make_kernelversion):
@@ -29,7 +30,7 @@ def get_most_recent_release(builds_url):
     """
 
     first_build = None
-    for build in squad_client.Builds(builds_url):
+    for build in lkft_squad_client.Builds(builds_url):
         if not first_build:
             first_build = build
         if build["finished"]:
@@ -40,13 +41,13 @@ def get_most_recent_release(builds_url):
 
 
 def get_build_report(build_url):
-    build = squad_client.Build(build_url)
+    build = lkft_squad_client.Build(build_url)
     baseline_branch = get_branch_from_make_kernelversion(
         build.build_metadata["make_kernelversion"]
     )
 
     # Get baseline
-    baseline_project_url = squad_client.get_projects_by_branch()[baseline_branch]
+    baseline_project_url = lkft_squad_client.get_projects_by_branch()[baseline_branch]
     baseline_builds_url = baseline_project_url + "builds"
     baseline_build = get_most_recent_release(baseline_builds_url)
 
