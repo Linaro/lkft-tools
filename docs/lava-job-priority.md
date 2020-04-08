@@ -19,13 +19,15 @@ requirements, and it fully takes advantage of having 101 priorities available.
   - stable-rc sanity jobs (all branches)
   - mainline sanity jobs
 - 79: [Developer builder](developer-builder.md) jobs
-- 78: stable-rc-4.4
-- 77: stable-rc-4.9
-- 76: stable-rc-4.14
-- 75: stable-rc-4.19
-- 74: stable-rc 5.4
-- 73: reserved for 2020 LTS kernel (perhaps 5.9?)
-- 72: stable branches which are not LTS (e.g. 5.x)
+- 78: stable branches which are not LTS (e.g. 5.x)
+- 78: stable-rc 5.6
+- 77: stable-rc 5.5
+- 76: reserved for 2020 LTS kernel (perhaps 5.9?)
+- 75: stable-rc 5.4
+- 74: stable-rc-4.19
+- 73: stable-rc-4.14
+- 72: stable-rc-4.9
+- 71: stable-rc-4.4
 - 50: AOSP jobs
 - 30: linux-next sanity jobs
 - 25:
@@ -57,26 +59,44 @@ audit and observe them is with the following command (output abridged):
 drue@xps:~/src/configs$ grep -A1 PRIORITY *lkft*
 ...
 openembedded-lkft-linux-stable-rc-4.4.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-4.4.yaml-            default: '78'
+openembedded-lkft-linux-stable-rc-4.4.yaml-            default: '71'
 --
 openembedded-lkft-linux-stable-rc-4.4.yaml:            name: SANITY_LAVA_JOB_PRIORITY
 openembedded-lkft-linux-stable-rc-4.4.yaml-            default: '80'
 --
 openembedded-lkft-linux-stable-rc-4.9.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-4.9.yaml-            default: '77'
+openembedded-lkft-linux-stable-rc-4.9.yaml-            default: '72'
 --
 openembedded-lkft-linux-stable-rc-4.9.yaml:            name: SANITY_LAVA_JOB_PRIORITY
 openembedded-lkft-linux-stable-rc-4.9.yaml-            default: '80'
 --
+openembedded-lkft-linux-stable-rc-4.14.yaml:            name: LAVA_JOB_PRIORITY
+openembedded-lkft-linux-stable-rc-4.14.yaml-            default: '73'
+--
+openembedded-lkft-linux-stable-rc-4.14.yaml:            name: SANITY_LAVA_JOB_PRIORITY
+openembedded-lkft-linux-stable-rc-4.14.yaml-            default: '80'
+...
+openembedded-lkft-linux-stable-rc-4.19.yaml:            name: LAVA_JOB_PRIORITY
+openembedded-lkft-linux-stable-rc-4.19.yaml-            default: '74'
+--
+openembedded-lkft-linux-stable-rc-4.19.yaml:            name: SANITY_LAVA_JOB_PRIORITY
+openembedded-lkft-linux-stable-rc-4.19.yaml-            default: '80'
+--
 openembedded-lkft-linux-stable-rc-5.4.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-5.4.yaml-            default: '74'
+openembedded-lkft-linux-stable-rc-5.4.yaml-            default: '75'
 --
 openembedded-lkft-linux-stable-rc-5.4.yaml:            name: SANITY_LAVA_JOB_PRIORITY
 openembedded-lkft-linux-stable-rc-5.4.yaml-            default: '80'
 --
 openembedded-lkft-linux-stable-rc-5.5.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-5.5.yaml-            default: '72'
+openembedded-lkft-linux-stable-rc-5.5.yaml-            default: '77'
 --
 openembedded-lkft-linux-stable-rc-5.5.yaml:            name: SANITY_LAVA_JOB_PRIORITY
 openembedded-lkft-linux-stable-rc-5.5.yaml-            default: '80'
+--
+openembedded-lkft-linux-stable-rc-5.6.yaml:            name: LAVA_JOB_PRIORITY
+openembedded-lkft-linux-stable-rc-5.6.yaml-            default: '78'
+--
+openembedded-lkft-linux-stable-rc-5.6.yaml:            name: SANITY_LAVA_JOB_PRIORITY
+openembedded-lkft-linux-stable-rc-5.6.yaml-            default: '80'
 ```
