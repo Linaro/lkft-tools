@@ -205,6 +205,8 @@ if __name__ == "__main__":
             """Results from Linaro’s test farm.
 No regressions on arm64, arm, x86_64, and i386.
 
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
 """
             + report
         )
@@ -212,6 +214,8 @@ No regressions on arm64, arm, x86_64, and i386.
         report = (
             """Results from Linaro’s test farm.
 Regressions detected.
+
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
 """
             + report
