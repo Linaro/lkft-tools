@@ -84,14 +84,17 @@ def cancel_lava_jobs(
                 print("Skipping: %s. Remote LAVA server." % testjob["job_id"])
                 continue
 
-            print("Canceling: %s" % (testjob["job_id"]))
+            if testjob["job_id"]:
+                print("Canceling: %s" % (testjob["job_id"]))
 
-            cmd = "lavacli {} jobs cancel {}".format(
-                identity_argument, testjob["job_id"]
-            )
-            print(cmd)
-            if not dryrun:
-                subprocess.check_call(cmd, shell=True)
+                cmd = "lavacli {} jobs cancel {}".format(
+                    identity_argument, testjob["job_id"]
+                )
+                print(cmd)
+                if not dryrun:
+                    subprocess.check_call(cmd, shell=True)
+            else:
+                print("Odd job: %s" % testjob["url"])
 
 
 if __name__ == "__main__":
