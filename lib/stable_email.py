@@ -44,7 +44,7 @@ def get_version(m):
 
 def get_review_requests(dt_limit):
     print(
-        "* Looking for review requests after %s..."
+        "* Looking for review requests since %s..."
         % dt_limit.strftime("%Y-%m-%d %H:%M UTC")
     )
     fg = {}
@@ -99,7 +99,7 @@ def get_review_replies(oldest, fg):
             efrom = msg["from"]
             # if 'gregkh' not in efrom:
             if "linaro.org" in efrom:
-                print("%d: %s" % (x, efrom))
+                print("%d: %s %s" % (x, msg["subject"], efrom))
                 if "replies" in fg[inrt]:
                     fg[inrt]["replies"].append(commit)
                 else:
