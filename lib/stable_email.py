@@ -17,8 +17,8 @@ def commit_to_email_message(commit):
     return m
 
 
-def is_greg_request(commit):
-    if commit.author.email == "gregkh@linuxfoundation.org":
+def is_review_request(commit):
+    if commit.author.email in ["gregkh@linuxfoundation.org", "sashal@kernel.org"]:
         m = commit_to_email_message(commit)
         if "X-KernelTest-Branch" in m and "in-reply-to" not in m:
             return m
@@ -33,11 +33,12 @@ def is_beyond_time_search(commit, limit):
 
 def get_version(m):
     sub = m["subject"]
-    if not sub.endswith("-stable review"):
+    if not sub.endswith(" review"):
         return False
     if not sub.startswith("["):
         return False
-    sub1 = sub.replace("-stable review", "")
+    sub = sub.replace("-stable review", "")
+    sub1 = sub.replace(" review", "")
     return sub1[sub1.rfind(" ") + 1 :]
 
 
@@ -64,7 +65,7 @@ def get_review_requests(dt_limit):
             break
 
         # Look for Greg's stable RC review requests
-        msg = is_greg_request(commit)
+        msg = is_review_request(commit)
         if msg:
             print("Found: %s" % commit.summary)
             fg[msg["message-id"]] = {"request": commit}
@@ -158,11 +159,12 @@ class Review(object):
 
     def get_linux_version(self):
         sub = self.request.summary
-        if not sub.endswith("-stable review"):
+        if not sub.endswith(" review"):
             return None
         if not sub.startswith("["):
             return None
-        sub1 = sub.replace("-stable review", "")
+        sub = sub.replace("-stable review", "")
+        sub1 = sub.replace(" review", "")
         return sub1[sub1.rfind(" ") + 1 :]
 
     def get_ymd(self):
