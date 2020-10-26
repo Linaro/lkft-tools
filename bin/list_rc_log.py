@@ -6,9 +6,17 @@ import datetime
 import os
 import pytz
 import sys
+import re
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
 import stable_email  # noqa: E402
+
+def get_number(s):
+    match = re.search('(\d+)', s)
+    if match:
+        return int(match.group(1))
+    else:
+        return None
 
 
 if __name__ == "__main__":
@@ -106,10 +114,13 @@ if __name__ == "__main__":
 
     # {'2019-08-09': {'<48h': ['4.4.189']}, '2019-08-08': {'<24h': ['5.2.8', '4.19.66', '4.14.138']}}
     print("")
-    for date, slas in rclog.items():
+    for date in sorted(rclog, reverse=True):
+        slas = rclog[date]
         print("### {}".format(date))
-        for sla, releases in slas.items():
-            print("#### {}".format(" ".join(releases)))
+        for sla in sorted(slas, key=lambda sla: get_number(sla)):
+            releases = slas[sla]
+            releases.sort(key=lambda s: list(map(get_number, s.split('.'))))
+            print("#### {}".format(", ".join(releases)))
             print("<!-- sla {} {} -->".format(sla.strip("h"), len(releases)))
             print("- XXX in {}".format(sla))
         print("")
