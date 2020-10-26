@@ -66,13 +66,22 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Generate report of branches tested recently"
     )
-    parser.add_argument(
+    parser.add_argument("-s", "--since",
         dest="date",
         type=valid_date_type,
         help='Report on builds that occured since date given (inclusive) "YYYY-MM-DD"',
     )
+    parser.add_argument("-u", "--until",
+        dest="until_date",
+        type=valid_date_type,
+        help='Report on builds that occured up to date given (inclusive) "YYYY-MM-DD"',
+    )
     args = parser.parse_args()
     date = args.date
+    until_date = args.until_date or datetime.datetime()
+
+    # end of day
+    until_date = until_date.replace(hour=23, minute=59, second=59)
 
     branches = lkft_squad_client.get_projects_by_branch()
 
@@ -83,11 +92,17 @@ if __name__ == "__main__":
         builds_url = urljoin(branch_url, "builds")
         builds_to_report = []
         for build in lkft_squad_client.Builds(builds_url):
-            if date > datetime.datetime.strptime(
+            build_date = datetime.datetime.strptime(
                 build["datetime"], "%Y-%m-%dT%H:%M:%S.%fZ"
-            ):
+            )
+            if date < build_date and build_date <= until_date:
+                # print("build date: %s REPORT" % build_date)
+                builds_to_report.append(build)
+            else:
+                # print("build date: %s" % build_date)
+                pass
+            if date > build_date:
                 break
-            builds_to_report.append(build)
         test_counts = get_test_count(builds_to_report)
         test_count_total += test_counts["test_count"]
         test_run_total += test_counts["test_run_count"]
