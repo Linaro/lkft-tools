@@ -255,7 +255,7 @@ if __name__ == "__main__":
         build_list = lkft_squad_client.get_objects(
             project_info["builds"],
             parameters={"version": build_version},
-            limit=args.max_builds,
+            limit=50,
         )
 
         main_build = None
