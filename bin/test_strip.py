@@ -171,7 +171,13 @@ class TestStripWriter(object):
         print("Unsubmitted: %8d" % len(self.testruns["unsubmitted"]))
         print("Unknown:     %8d" % len(self.testruns["unknown"]))
         progress = (
-            100 * (self.num_jobs - len(self.testruns["unfetched"])) / self.num_jobs
+            100
+            * (
+                self.num_jobs
+                - len(self.testruns["unfetched"])
+                - len(self.testruns["unsubmitted"])
+            )
+            / self.num_jobs
         )
         print("Progress:      %3.02f%%" % progress)
 
