@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     # Get list of builds for that group/project
     build_list = lkft_squad_client.get_objects(
-        project_info["builds"],
+        project_info["url"] + "builds/",
         parameters={"version": build_version},
         limit=args.max_builds,
     )
