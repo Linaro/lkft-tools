@@ -4,6 +4,7 @@ import argparse
 import os
 import subprocess
 import sys
+import re
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
 import lkft_squad_client  # noqa: E402
@@ -17,6 +18,7 @@ def cancel_lava_jobs(
     identity=None,
     dryrun=False,
     group="lkft",
+    pattern=None,
 ):
     """
         Requires lavacli. If using a non-default lava identity, specify the identity
@@ -84,8 +86,12 @@ def cancel_lava_jobs(
                 print("Skipping: %s. Remote LAVA server." % testjob["job_id"])
                 continue
 
+            if pattern:
+                if not re.search(pattern, testjob["name"]):
+                    print("Skipping: %s; no match" % testjob["job_id"])
+                    continue
             if testjob["job_id"]:
-                print("Canceling: %s" % (testjob["job_id"]))
+                print("Canceling: %s %s" % ((testjob["job_id"], testjob["name"])))
 
                 cmd = "lavacli {} jobs cancel {}".format(
                     identity_argument, testjob["job_id"]
@@ -118,6 +124,9 @@ Example usage:
         action="store_true",
         help="Show what jobs would be cancelled",
     )
+    parser.add_argument(
+        "--pattern", "-p", dest="pattern", default=None, help="Pattern to cancel"
+    )
     parser.add_argument("build_url", help="URL of the build")
     parser.add_argument(
         "--environment_name",
@@ -145,4 +154,5 @@ Example usage:
         dryrun=args.dryrun,
         group=group,
         environment=args.environment_name,
+        pattern=args.pattern,
     )
