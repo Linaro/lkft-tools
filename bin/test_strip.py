@@ -170,15 +170,17 @@ class TestStripWriter(object):
         print("Unfetched:   %8d" % len(self.testruns["unfetched"]))
         print("Unsubmitted: %8d" % len(self.testruns["unsubmitted"]))
         print("Unknown:     %8d" % len(self.testruns["unknown"]))
-        progress = (
-            100
-            * (
-                self.num_jobs
-                - len(self.testruns["unfetched"])
-                - len(self.testruns["unsubmitted"])
+        progress = 0
+        if self.num_jobs > 0:
+            progress = (
+                100
+                * (
+                    self.num_jobs
+                    - len(self.testruns["unfetched"])
+                    - len(self.testruns["unsubmitted"])
+                )
+                / self.num_jobs
             )
-            / self.num_jobs
-        )
         print("Progress:      %3.02f%%" % progress)
 
 
@@ -259,9 +261,7 @@ if __name__ == "__main__":
 
         # Get list of builds for that group/project
         build_list = lkft_squad_client.get_objects(
-            project_info["builds"],
-            parameters={"version": build_version},
-            limit=50,
+            project_info["builds"], parameters={"version": build_version}, limit=50
         )
 
         main_build = None
