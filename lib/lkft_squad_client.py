@@ -25,10 +25,11 @@ def get_projects_by_branch():
         "5.8": "https://qa-reports.linaro.org/api/projects/347/",
         "5.9": "https://qa-reports.linaro.org/api/projects/497/",
         "5.10": "https://qa-reports.linaro.org/api/projects/597/",
+        "5.11": "https://qa-reports.linaro.org/api/projects/651/",
         # Refer to mainline by its version number
         # This is necessary so that lkft_notify_developer can determine
         # which branch to use
-        "5.11": "https://qa-reports.linaro.org/api/projects/22/",
+        "5.12": "https://qa-reports.linaro.org/api/projects/22/",
         "next": "https://qa-reports.linaro.org/api/projects/6/",
     }
 
