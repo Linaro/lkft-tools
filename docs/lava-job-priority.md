@@ -27,6 +27,7 @@ requirements, and it fully takes advantage of having 101 priorities available.
 - 73: stable-rc-4.14
 - 72: stable-rc-4.9
 - 71: stable-rc-4.4
+- 60: higher priority AOSP jobs
 - 50: AOSP jobs
 - 30: linux-next sanity jobs
 - 26: linux-next regular jobs
@@ -40,6 +41,9 @@ A few notes on how the above priorities are decided.
 
 - stable-rc results have strict requirements on turnaround time, and are
   therefore prioritized above mainline and next.
+- There are the cases that some AOSP jobs need to be run first to have
+  test results in time than the other normal jobs, but still not affect
+  other non-AOSP jobs.
 - AOSP jobs take a lot of wall time, and are prioritized between stable and
   next/mainline.
 - Sanity jobs are used for rapid turnaround, and should have the highest
@@ -92,4 +96,7 @@ openembedded-lkft-linux-stable-rc-5.7.yaml-            default: '78'
 --
 openembedded-lkft-linux-stable-rc-5.7.yaml:            name: SANITY_LAVA_JOB_PRIORITY
 openembedded-lkft-linux-stable-rc-5.7.yaml-            default: '80'
+--
+lkft-member-build.yaml:            name: TEST_LAVA_JOB_PRIORITY
+lkft-member-build.yaml-            default: 60
 ```
