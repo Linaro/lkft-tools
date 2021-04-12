@@ -19,8 +19,8 @@ requirements, and it fully takes advantage of having 101 priorities available.
   - stable-rc sanity jobs (all branches)
   - mainline sanity jobs
 - 79: [Developer builder](developer-builder.md) jobs
-- 78: stable branches which are not LTS (e.g. 5.x)
-- 77: stable branches which are not LTS (e.g. 5.x)
+- 78: stable branches which are not LTS (e.g. 5.12)
+- 77: stable branches which are not LTS (e.g. 5.11)
 - 76: stable-rc 5.10
 - 75: stable-rc 5.4
 - 74: stable-rc 4.19
