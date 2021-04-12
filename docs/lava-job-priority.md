@@ -19,14 +19,14 @@ requirements, and it fully takes advantage of having 101 priorities available.
   - stable-rc sanity jobs (all branches)
   - mainline sanity jobs
 - 79: [Developer builder](developer-builder.md) jobs
-- 78: stable branches which are not LTS (e.g. 5.x)
-- 77: stable branches which are not LTS (e.g. 5.x)
-- 76: reserved for 2020 LTS kernel (perhaps 5.9?)
+- 78: stable branches which are not LTS (e.g. 5.12)
+- 77: stable branches which are not LTS (e.g. 5.11)
+- 76: stable-rc 5.10
 - 75: stable-rc 5.4
-- 74: stable-rc-4.19
-- 73: stable-rc-4.14
-- 72: stable-rc-4.9
-- 71: stable-rc-4.4
+- 74: stable-rc 4.19
+- 73: stable-rc 4.14
+- 72: stable-rc 4.9
+- 71: stable-rc 4.4
 - 60: higher priority AOSP jobs
 - 50: AOSP jobs
 - 30: linux-next sanity jobs
