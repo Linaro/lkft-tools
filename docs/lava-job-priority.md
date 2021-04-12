@@ -23,10 +23,10 @@ requirements, and it fully takes advantage of having 101 priorities available.
 - 77: stable branches which are not LTS (e.g. 5.x)
 - 76: reserved for 2020 LTS kernel (perhaps 5.9?)
 - 75: stable-rc 5.4
-- 74: stable-rc-4.19
-- 73: stable-rc-4.14
-- 72: stable-rc-4.9
-- 71: stable-rc-4.4
+- 74: stable-rc 4.19
+- 73: stable-rc 4.14
+- 72: stable-rc 4.9
+- 71: stable-rc 4.4
 - 60: higher priority AOSP jobs
 - 50: AOSP jobs
 - 30: linux-next sanity jobs
