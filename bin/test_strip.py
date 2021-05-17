@@ -217,7 +217,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    build_result = None
+    selected_build = None
 
     if args.branch:
         if args.branch not in available_branches:
@@ -227,7 +227,7 @@ if __name__ == "__main__":
         builds_url = urljoin(projects[args.branch], "builds")
         all_builds = lkft_squad_client.Builds(builds_url)
         for build in all_builds:
-            build_result = build
+            selected_build = build
             break
         if all_builds is None:
             sys.exit("No builds")
@@ -267,6 +267,6 @@ if __name__ == "__main__":
         main_build = None
         for build in build_list:
             if build["version"] == build_version:
-                build_result = build
+                selected_build = build
 
-    write_test_jobs(build_result, args.output)
+    write_test_jobs(selected_build, args.output)
