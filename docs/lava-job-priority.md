@@ -29,6 +29,7 @@ requirements, and it fully takes advantage of having 101 priorities available.
 - 71: stable-rc-4.4
 - 60: higher priority AOSP jobs
 - 50: AOSP jobs
+- 45: stable-rt and rt-devel jobs
 - 40: lower priority AOSP jobs
 - 30: linux-next sanity jobs
 - 26: linux-next regular jobs
