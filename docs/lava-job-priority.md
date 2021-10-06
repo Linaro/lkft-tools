@@ -56,8 +56,11 @@ A few notes on how the above priorities are decided.
 ## Implementation
 
 These priorities are generally set in the [configs
-repo](https://git.linaro.org/ci/job/configs.git/tree/). The easiest way to
-audit and observe them is with the following command (output abridged):
+repo](https://git.linaro.org/ci/job/configs.git/tree/), [common
+repo](https://gitlab.com./Linaro/lkft/pipelines/common.git) or [lkft-common
+repo](https://gitlab.com./Linaro/lkft/pipelines/lkft-common.git) in the files
+in the gitlab-ci/ directory. The easiest way to audit and observe them is with
+the following command (output abridged):
 
 ```sh
 drue@xps:~/src/configs$ grep -A1 PRIORITY *lkft*
