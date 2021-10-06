@@ -29,6 +29,7 @@ requirements, and it fully takes advantage of having 101 priorities available.
 - 71: stable-rc-4.4
 - 60: higher priority AOSP jobs
 - 50: AOSP jobs
+- 45: stable-rt and rt-devel jobs
 - 40: lower priority AOSP jobs
 - 30: linux-next sanity jobs
 - 26: linux-next regular jobs
@@ -56,8 +57,11 @@ A few notes on how the above priorities are decided.
 ## Implementation
 
 These priorities are generally set in the [configs
-repo](https://git.linaro.org/ci/job/configs.git/tree/). The easiest way to
-audit and observe them is with the following command (output abridged):
+repo](https://git.linaro.org/ci/job/configs.git/tree/), [common
+repo](https://gitlab.com./Linaro/lkft/pipelines/common.git) or [lkft-common
+repo](https://gitlab.com./Linaro/lkft/pipelines/lkft-common.git) in the files
+in the gitlab-ci/ directory. The easiest way to audit and observe them is with
+the following command (output abridged):
 
 ```sh
 drue@xps:~/src/configs$ grep -A1 PRIORITY *lkft*
