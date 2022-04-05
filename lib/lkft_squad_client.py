@@ -71,8 +71,26 @@ def get_squad_params_from_build_url(url):
              'linux-stable-rc-4.9-oe',
              'v4.9.162-94-g0384d1b03fc9'
             )
+        IN:
+            https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/
+        OUT:
+            ('https://qa-reports.linaro.org',
+             'lkft',
+             'linux-stable-rc-4.9-oe',
+             None
+            )
     """
-    return re.match(r"(https?://[^/$]*)/([^/]*)/([^/]*)/build/([^/]*)", url).groups()
+    # first
+    try:
+        rematch = re.match(r"(https?://[^/$]*)/([^/]*)/([^/]*)/build/([^/]*)", url).groups()
+    except:
+        # second
+        try:
+            rematch = re.match(r"(https?://[^/$]*)/([^/]*)/([^/]*)", url).groups() + (None, )
+        except:
+            pass
+
+    return rematch
 
 
 def urljoiner(*args):
