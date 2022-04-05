@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import ast
 import os
 import sys
+
+import requests
 
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
 import lkft_squad_client  # noqa: E402
@@ -57,6 +60,32 @@ def format_test_job(testjob):
     return status, completed
 
 
+def get_testjob_lavajob_id(testjob):
+    split_lavajob_id = testjob["external_url"].split("/")
+    lavajob_id = split_lavajob_id[-1]
+    return lavajob_id
+
+
+def save_testjob_log(testjob):
+    lavajob_id = get_testjob_lavajob_id(testjob)
+    name = testjob["name"]
+    url = testjob["testrun"]
+
+    filename = lavajob_id + "-" + name + ".log"
+    handle = open(filename, "w")
+    response = requests.get(url + "log_file/")
+    if response.status_code == 200:
+        handle.write(response.text)
+    handle.close()
+
+
+def get_failure_reason(testjob):
+    failure = testjob["failure"]
+    failure_dict = ast.literal_eval(failure)
+    reason = failure_dict["error_msg"]
+    return reason
+
+
 def print_test_jobs(build):
     testruns = {}
     testruns["complete"] = []
@@ -108,10 +137,33 @@ def print_test_jobs(build):
 
     print()
 
+    if args.save_logs:
+        for testjob in testruns["incomplete"]:
+            logfile = save_testjob_log(testjob)
+
+    if args.incomplete:
+        for testjob in testruns["incomplete"]:
+            reason = get_failure_reason(testjob)
+            print(
+                "%d,%s,%s,%s"
+                % (
+                    int(get_testjob_lavajob_id(testjob)),
+                    testjob["environment"],
+                    testjob["name"],
+                    reason,
+                )
+            )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("build_url", help="URL of the build")
+    parser.add_argument(
+        "--incomplete",
+        "-i",
+        action="store_true",
+        help="List incomplete jobs and their failure when --printing-jobs",
+    )
     parser.add_argument(
         "--max-builds",
         "-m",
@@ -124,6 +176,12 @@ if __name__ == "__main__":
         "-p",
         action="store_true",
         help="Print a representation of the test jobs",
+    )
+    parser.add_argument(
+        "--save-logs",
+        "-s",
+        action="store_true",
+        help="Save logs of incomplete jobs",
     )
     args = parser.parse_args()
 
