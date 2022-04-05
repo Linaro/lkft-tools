@@ -29,6 +29,86 @@ def print_build_info_row(build):
     )
 
 
+def get_testjob_status(testjob):
+    status = "unknown"
+    submitted = testjob["submitted"]
+    fetched = testjob["fetched"]
+    if "job_status" in testjob:
+        if testjob["job_status"] == "Complete":
+            status = "complete"
+        elif testjob["job_status"] == "Incomplete":
+            status = "incomplete"
+        elif testjob["job_status"] == "Canceled":
+            status = "canceled"
+    if not submitted:
+        status = "unsubmitted"
+    if not fetched:
+        status = "unfetched"
+    return status
+
+
+def format_test_job(testjob):
+    status = get_testjob_status(testjob)
+
+    completed = False
+    if "completed" in testjob:
+        completed = True
+
+    return status, completed
+
+
+def print_test_jobs(build):
+    testruns = {}
+    testruns["complete"] = []
+    testruns["incomplete"] = []
+    testruns["canceled"] = []
+    testruns["unfetched"] = []
+    testruns["unsubmitted"] = []
+    testruns["unknown"] = []
+    base_url = build["testjobs"]
+    try:
+        # testruns_info = lkft_squad_client.get_objects(base_url, params)[0]
+        testruns_list = lkft_squad_client.get_objects(base_url)
+    except Exception:
+        exit("Error: not found at {}".format(base_url))
+
+    # Get list of testruns for that group/project
+
+    for testrun in testruns_list:
+        status = get_testjob_status(testrun)
+        testruns[status].append(testrun)
+
+    print("#" * len(testruns["complete"]), end="")
+    print("X" * len(testruns["incomplete"]), end="")
+    print("c" * len(testruns["canceled"]), end="")
+    print("-" * len(testruns["unfetched"]), end="")
+    print("." * len(testruns["unsubmitted"]), end="")
+    print("?" * len(testruns["unknown"]), end="")
+    print("")
+    print(
+        "Total:       %8d"
+        % (
+            len(testruns["complete"])
+            + len(testruns["incomplete"])
+            + len(testruns["canceled"])
+            + len(testruns["unfetched"])
+            + len(testruns["unsubmitted"])
+            + len(testruns["unknown"])
+        )
+    )
+    print("Complete:    %8d" % len(testruns["complete"]))
+    print("Incomplete:  %8d" % len(testruns["incomplete"]))
+    print("Canceled:    %8d" % len(testruns["canceled"]))
+    print("Unfetched:   %8d" % len(testruns["unfetched"]))
+    print("Unsubmitted: %8d" % len(testruns["unsubmitted"]))
+    print("Unknown:     %8d" % len(testruns["unknown"]))
+    # for category in ["complete", "incomplete", "unfetched", "unsubmitted"]:
+    #     for testrun in testruns[category]:
+    #         print("{}".format(testrun), end="")
+
+    print()
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("build_url", help="URL of the build")
@@ -38,6 +118,12 @@ if __name__ == "__main__":
         default=10,
         type=int,
         help="Number of recent builds to look for information",
+    )
+    parser.add_argument(
+        "--print-jobs",
+        "-p",
+        action="store_true",
+        help="Print a representation of the test jobs",
     )
     args = parser.parse_args()
 
@@ -87,3 +173,6 @@ if __name__ == "__main__":
     print("Other builds from the same project:")
     for build in build_list:
         print_build_info_row(build)
+
+    if args.print_jobs:
+        print_test_jobs(main_build)
