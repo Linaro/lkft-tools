@@ -44,7 +44,7 @@ def get_test_count(builds):
 
 
 def get_project_name(project_url):
-    """ Given a squad project url, return the project name """
+    """Given a squad project url, return the project name"""
     return lkft_squad_client.get_objects(project_url, limit=1)["name"]
 
 
@@ -66,12 +66,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Generate report of branches tested recently"
     )
-    parser.add_argument("-s", "--since",
+    parser.add_argument(
+        "-s",
+        "--since",
         dest="date",
         type=valid_date_type,
         help='Report on builds that occured since date given (inclusive) "YYYY-MM-DD"',
     )
-    parser.add_argument("-u", "--until",
+    parser.add_argument(
+        "-u",
+        "--until",
         dest="until_date",
         type=valid_date_type,
         help='Report on builds that occured up to date given (inclusive) "YYYY-MM-DD"',

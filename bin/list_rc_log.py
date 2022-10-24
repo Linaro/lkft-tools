@@ -11,8 +11,9 @@ import re
 sys.path.append(os.path.join(sys.path[0], "../", "lib"))
 import stable_email  # noqa: E402
 
+
 def get_number(s):
-    match = re.search('(\d+)', s)
+    match = re.search("(\d+)", s)
     if match:
         return int(match.group(1))
     else:
@@ -119,7 +120,7 @@ if __name__ == "__main__":
         print("### {}".format(date))
         for sla in sorted(slas, key=lambda sla: get_number(sla)):
             releases = slas[sla]
-            releases.sort(key=lambda s: list(map(get_number, s.split('.'))))
+            releases.sort(key=lambda s: list(map(get_number, s.split("."))))
             print("#### {}".format(", ".join(releases)))
             print("<!-- sla {} {} -->".format(sla.strip("h"), len(releases)))
             print("- XXX in {}".format(sla))

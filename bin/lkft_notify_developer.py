@@ -13,10 +13,10 @@ import lkft_squad_client  # noqa: E402
 
 def get_branch_from_make_kernelversion(make_kernelversion):
     """
-        IN: "4.4.118"
-        OUT: "4.4"
-        IN: "4.9.118-rc1"
-        OUT: "4.9"
+    IN: "4.4.118"
+    OUT: "4.4"
+    IN: "4.9.118-rc1"
+    OUT: "4.9"
     """
     pattern = re.compile(r"^(\d+\.\d+).*$")
     match = pattern.match(make_kernelversion)
@@ -25,8 +25,8 @@ def get_branch_from_make_kernelversion(make_kernelversion):
 
 def get_most_recent_release(builds_url):
     """
-        Given a list of builds that is sorted with the newest first,
-        return the most recent finished build.
+    Given a list of builds that is sorted with the newest first,
+    return the most recent finished build.
     """
 
     first_build = None

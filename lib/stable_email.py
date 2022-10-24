@@ -11,6 +11,7 @@ import git
 
 OLD_MSGS_STREAK = 10
 
+
 def commit_to_email_message(commit):
     raw_msg = commit.tree["m"].data_stream.read()
     m = email.message_from_bytes(raw_msg, policy=email.policy.EmailPolicy(utf8=True))

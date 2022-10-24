@@ -17,7 +17,7 @@ template_id = "12"  # kselftest-specific template
 def get_build_report(
     project_url, unfinished=False, build_id=None, force_report=False, timeout=120
 ):
-    """ Given a project URL, return a test report """
+    """Given a project URL, return a test report"""
 
     report = ""
 

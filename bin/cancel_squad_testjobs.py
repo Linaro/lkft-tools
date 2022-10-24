@@ -21,21 +21,21 @@ def cancel_lava_jobs(
     pattern=None,
 ):
     """
-        Requires lavacli. If using a non-default lava identity, specify the identity
-        string in 'identity'. The dryrun option, when True, will print the command
-        to be executed but will not run it.
+    Requires lavacli. If using a non-default lava identity, specify the identity
+    string in 'identity'. The dryrun option, when True, will print the command
+    to be executed but will not run it.
 
-        If 'environment' is set, only jobs in the given environment will be
-        cancelled.
+    If 'environment' is set, only jobs in the given environment will be
+    cancelled.
 
-        Given something like the following:
-            url="https://qa-reports.linaro.org"
-            project="linux-stable-rc-4.9-oe"
-            build="v4.9.162-94-g0384d1b03fc9"
+    Given something like the following:
+        url="https://qa-reports.linaro.org"
+        project="linux-stable-rc-4.9-oe"
+        build="v4.9.162-94-g0384d1b03fc9"
 
-        Discover and cancel all lava jobs that are still running.
+    Discover and cancel all lava jobs that are still running.
 
-        Note this doesn't handle duplicate project names well..
+    Note this doesn't handle duplicate project names well..
     """
 
     base_url = lkft_squad_client.urljoiner(url, "api/groups/")

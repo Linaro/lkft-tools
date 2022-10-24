@@ -15,11 +15,11 @@ import lkft_squad_client  # noqa: E402
 
 def extract_version_info(version):
     """
-        IN: version="v4.18.4-23-gc456dc1ec5f9"
-        OUT: (4, 18, 4, 23, gc456dc1ec5f9)
+    IN: version="v4.18.4-23-gc456dc1ec5f9"
+    OUT: (4, 18, 4, 23, gc456dc1ec5f9)
 
-        IN: version="v4.18.4"
-        OUT: (4, 18, 4, None, None)
+    IN: version="v4.18.4"
+    OUT: (4, 18, 4, None, None)
     """
     pattern = re.compile(r"v(\d+)\.(\d+)\.(\d+)-?(\d+)?-?(\w+)?")
     match = pattern.match(version)
@@ -34,24 +34,24 @@ def extract_version_info(version):
 
 def detect_baseline(build_result, builds_url):
     """
-        Given a build and a build url, find the baseline
+    Given a build and a build url, find the baseline
 
-        The baseline is found by looking at the 'version' field in
-        build_result, and looking through previous builds such that:
+    The baseline is found by looking at the 'version' field in
+    build_result, and looking through previous builds such that:
 
-        Given the following list of versions:
-            v4.18.5
-            v4.18.4-23-gc456dc1ec5f9
-            v4.18.4-13-g2a9a12ddb3b0
-            v4.18.4-7-ga00ca2e5e60b
-            v4.18.3-36-g28b2837b7236
-            v4.18.3-36-g1b2dc862d5f3
-            v4.18.3
+    Given the following list of versions:
+        v4.18.5
+        v4.18.4-23-gc456dc1ec5f9
+        v4.18.4-13-g2a9a12ddb3b0
+        v4.18.4-7-ga00ca2e5e60b
+        v4.18.3-36-g28b2837b7236
+        v4.18.3-36-g1b2dc862d5f3
+        v4.18.3
 
-        The following IN -> OUT should be returned:
-            v4.18.5 -> v4.18.3-36-g28b2837b7236
-            v4.18.4-23-gc456dc1ec5f9 -> v4.18.3-36-g28b2837b7236
-            v4.18.3-36-g28b2837b7236 -> v4.18.3
+    The following IN -> OUT should be returned:
+        v4.18.5 -> v4.18.3-36-g28b2837b7236
+        v4.18.4-23-gc456dc1ec5f9 -> v4.18.3-36-g28b2837b7236
+        v4.18.3-36-g28b2837b7236 -> v4.18.3
 
     """
     (
@@ -94,7 +94,7 @@ def get_build_report(
     force_report=False,
     timeout=120,
 ):
-    """ Given a project URL, return a test report """
+    """Given a project URL, return a test report"""
 
     report = ""
 

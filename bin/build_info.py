@@ -87,7 +87,7 @@ def get_failure_reason(testjob):
     else:
         reason = "<Unknown>"
     # Just first line
-    reason = reason.split('\n', 1)[0]
+    reason = reason.split("\n", 1)[0]
     return reason
 
 

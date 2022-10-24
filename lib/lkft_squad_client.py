@@ -48,48 +48,52 @@ def get_projects_by_branch():
 
 def get_domain_from_url(url):
     """
-        Given a fully qualified http or https url, return the
-        domain name.
-        IN:
-            https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/
-            https://qa-reports.linaro.org
-            http://qa-reports.linaro.org
-        OUT:
-            qa-reports.linaro.org
+    Given a fully qualified http or https url, return the
+    domain name.
+    IN:
+        https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/
+        https://qa-reports.linaro.org
+        http://qa-reports.linaro.org
+    OUT:
+        qa-reports.linaro.org
     """
     return re.match(r"https?://([^/$]*)", url).groups()[0]
 
 
 def get_squad_params_from_build_url(url):
     """
-        Given a url to a build, return a tuple consisting of
-        (squad-url, group-slug, project-slug, build-version)
+    Given a url to a build, return a tuple consisting of
+    (squad-url, group-slug, project-slug, build-version)
 
-        For example:
-        IN:
-            https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.162-94-g0384d1b03fc9/
-        OUT:
-            ('https://qa-reports.linaro.org',
-             'lkft',
-             'linux-stable-rc-4.9-oe',
-             'v4.9.162-94-g0384d1b03fc9'
-            )
-        IN:
-            https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/
-        OUT:
-            ('https://qa-reports.linaro.org',
-             'lkft',
-             'linux-stable-rc-4.9-oe',
-             None
-            )
+    For example:
+    IN:
+        https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.162-94-g0384d1b03fc9/
+    OUT:
+        ('https://qa-reports.linaro.org',
+         'lkft',
+         'linux-stable-rc-4.9-oe',
+         'v4.9.162-94-g0384d1b03fc9'
+        )
+    IN:
+        https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/
+    OUT:
+        ('https://qa-reports.linaro.org',
+         'lkft',
+         'linux-stable-rc-4.9-oe',
+         None
+        )
     """
     # first
     try:
-        rematch = re.match(r"(https?://[^/$]*)/([^/]*)/([^/]*)/build/([^/]*)", url).groups()
+        rematch = re.match(
+            r"(https?://[^/$]*)/([^/]*)/([^/]*)/build/([^/]*)", url
+        ).groups()
     except:
         # second
         try:
-            rematch = re.match(r"(https?://[^/$]*)/([^/]*)/([^/]*)", url).groups() + (None, )
+            rematch = re.match(r"(https?://[^/$]*)/([^/]*)/([^/]*)", url).groups() + (
+                None,
+            )
         except:
             pass
 

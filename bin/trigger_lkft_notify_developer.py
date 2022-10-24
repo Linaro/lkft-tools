@@ -17,7 +17,7 @@ MAX_AGE_DAYS = 7
 
 
 def get_notified_builds(state_file):
-    """ Return a list of build ids that have already been notified """
+    """Return a list of build ids that have already been notified"""
 
     if not os.path.isfile(state_file):
         with open(state_file, "w") as f:
