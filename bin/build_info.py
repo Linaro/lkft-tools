@@ -82,7 +82,12 @@ def save_testjob_log(testjob):
 def get_failure_reason(testjob):
     failure = testjob["failure"]
     failure_dict = ast.literal_eval(failure)
-    reason = failure_dict["error_msg"]
+    if "error_msg" in failure_dict:
+        reason = failure_dict["error_msg"]
+    else:
+        reason = "<Unknown>"
+    # Just first line
+    reason = reason.split('\n', 1)[0]
     return reason
 
 
