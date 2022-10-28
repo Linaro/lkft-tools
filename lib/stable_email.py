@@ -43,14 +43,14 @@ def get_version(m):
     return sub1[sub1.rfind(" ") + 1 :]
 
 
-def get_review_requests(dt_limit):
-    print(
-        "* Looking for review requests since %s..."
-        % dt_limit.strftime("%Y-%m-%d %H:%M UTC")
-    )
+def get_review_requests(dt_limit, git_dir="."):
+    # print(
+    #     "* Looking for review requests since %s..."
+    #     % dt_limit.strftime("%Y-%m-%d %H:%M UTC")
+    # )
     fg = {}
     x = 0
-    repo = git.Repo(".")
+    repo = git.Repo(git_dir)
     commits = repo.iter_commits("HEAD")
 
     older_streak = 0
@@ -62,23 +62,23 @@ def get_review_requests(dt_limit):
             older_streak = 0
 
         if older_streak >= OLD_MSGS_STREAK:
-            print("Done. Found %d review requests in %d messages." % (len(fg), x))
+            # print("Done. Found %d review requests in %d messages." % (len(fg), x))
             break
 
         # Look for Greg's stable RC review requests
         msg = is_review_request(commit)
         if msg:
-            print("Found: %s" % commit.summary)
+            # print("Found: %s" % commit.summary)
             fg[msg["message-id"]] = {"request": commit}
         x += 1
 
     return fg
 
 
-def get_review_replies(oldest, fg):
-    print("* Looking for replies...")
+def get_review_replies(oldest, fg, git_dir="."):
+    # print("* Looking for replies...")
     x = 0
-    repo = git.Repo(".")
+    repo = git.Repo(git_dir)
     commits = repo.iter_commits("HEAD")
 
     older_streak = 0

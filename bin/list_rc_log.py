@@ -23,6 +23,13 @@ def get_number(s):
 if __name__ == "__main__":
     # Arguments
     ap = argparse.ArgumentParser()
+    ap.add_argument(
+        "-C",
+        "--lore",
+        help="Directory with the Lore Git clone",
+        type=str,
+        default=".",
+    )
     g = ap.add_mutually_exclusive_group(required=False)
     g.add_argument(
         "-d",
