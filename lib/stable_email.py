@@ -171,6 +171,9 @@ class Review(object):
     def get_ymd(self):
         return self.request.committed_datetime.strftime("%Y-%m-%d")
 
+    def get_date(self):
+        return self.request.committed_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
     def get_from(self):
         return "%s <%s>" % (self.reply.author.name, self.reply.author.email)
 
