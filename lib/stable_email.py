@@ -112,6 +112,46 @@ def get_review_replies(oldest, fg, git_dir="."):
     return fg
 
 
+def print_email_by_id(email_id, dt_limit, git_dir="."):
+    m = get_email_by_id(email_id, dt_limit, git_dir)
+    print(m.as_string(policy=email.policy.default))
+
+
+def get_email_by_id(email_id, dt_limit, git_dir="."):
+    x = 0
+    repo = git.Repo(git_dir)
+    commits = repo.iter_commits("HEAD")
+
+    older_streak = 0
+    for commit in commits:
+        # Limit search
+        if is_beyond_time_search(commit, dt_limit):
+            older_streak += 1
+        else:
+            older_streak = 0
+
+        if older_streak >= OLD_MSGS_STREAK:
+            # print("Done. Found %d review requests in %d messages." % (len(fg), x))
+            break
+
+        # Look for Greg's stable RC review requests
+        m = commit_to_email_message(commit)
+        if m["message-id"] == f"<{email_id}>":
+            return m
+
+    return None
+
+
+def quote_email(body, trim_review=False):
+    quoted_email_body_list = []
+    for s in body.splitlines():
+        if trim_review and s == "-------------":
+            break
+        quoted_email_body_list.append("> " + s)
+
+    return "\n".join(quoted_email_body_list)
+
+
 class Review(object):
     request = None
     reply = None
