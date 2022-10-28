@@ -90,7 +90,7 @@ def get_review_replies(oldest, fg, git_dir="."):
             older_streak = 0
 
         if older_streak >= OLD_MSGS_STREAK:
-            print("Done. (Looked at %d messages.)" % x)
+            # print("Done. (Looked at %d messages.)" % x)
             break
 
         msg = commit_to_email_message(commit)
@@ -100,7 +100,7 @@ def get_review_replies(oldest, fg, git_dir="."):
             efrom = msg["from"]
             # if 'gregkh' not in efrom:
             if "linaro.org" in efrom:
-                print("%d: %s %s" % (x, msg["subject"], efrom))
+                # print("%d: %s %s" % (x, msg["subject"], efrom))
                 if "replies" in fg[inrt]:
                     fg[inrt]["replies"].append(commit)
                 else:
