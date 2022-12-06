@@ -226,7 +226,10 @@ class Review(object):
             return False
 
         msg = commit_to_email_message(self.reply)
-        body = msg.get_payload().lower()
+        payload = msg.get_payload()
+        if type(payload) == list:
+            payload = payload[0].get_payload()
+        body = payload.lower()
         if "no regressions on " in body:
             return False
         else:
