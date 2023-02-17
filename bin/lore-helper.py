@@ -166,7 +166,7 @@ if __name__ == "__main__":
                     replies = "Regressions"
 
         print(
-            "%s,%s,%s,%s"
+            "%s,stable,%s,%s,%s"
             % (
                 date,
                 linux_ver,

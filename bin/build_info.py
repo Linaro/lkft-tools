@@ -3,6 +3,7 @@
 
 import argparse
 import ast
+import datetime
 import os
 import sys
 
@@ -30,6 +31,25 @@ def print_build_info_row(build):
         "%6d %-40s %-8s %s"
         % (build["id"], build["version"], finished, build["created_at"])
     )
+
+
+def print_build_info_row_for_visor(build, slug):
+    finished = "Finished"
+    if not build["finished"]:
+        finished = "Running"
+
+    creation_dt = datetime.datetime.strptime(
+        build["created_at"], "%Y-%m-%dT%H:%M:%S.%fZ"
+    )
+    creation_str = creation_dt.strftime("%Y-%m-%d %H:%M:%S")
+
+    moniker = ""
+    if slug == "linux-next-master":
+        moniker = "linux-next"
+    if slug == "linux-mainline-master":
+        moniker = "mainline"
+
+    print("%s,%s,%s,None,None" % (creation_str, moniker, build["version"]))
 
 
 def get_testjob_status(testjob):
@@ -232,10 +252,13 @@ if __name__ == "__main__":
     if main_build:
         print_build_info(args.build_url, main_build)
         print("")
+        print("Other builds from the same project:")
 
-    print("Other builds from the same project:")
     for build in build_list:
-        print_build_info_row(build)
+        if main_build:
+            print_build_info_row(build)
+        else:
+            print_build_info_row_for_visor(build, project)
 
     if args.print_jobs:
         print_test_jobs(main_build)
