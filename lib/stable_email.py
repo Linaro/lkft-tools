@@ -208,6 +208,22 @@ class Review(object):
         sub1 = sub.replace(" review", "")
         return sub1[sub1.rfind(" ") + 1 :]
 
+    def get_linux_version_dict(self):
+        version_dict = {}
+        sub = self.request.summary
+        if not sub.endswith(" review"):
+            return None
+        if not sub.startswith("["):
+            return None
+        sub = sub.replace("-stable review", "")
+        sub1 = sub.replace(" review", "")
+        version_dict["str"] = sub1[sub1.rfind(" ") + 1 :]
+        version_dict["major"] = version_dict["str"].split(".")[0]
+        version_dict["minor"] = version_dict["str"].split(".")[1]
+        version_dict["patch"] = version_dict["str"].split(".")[2].split("-")[0]
+        version_dict["rc"] = version_dict["str"].split("-")[1].replace("rc", "")
+        return version_dict
+
     def get_ymd(self):
         return self.request.committed_datetime.strftime("%Y-%m-%d")
 

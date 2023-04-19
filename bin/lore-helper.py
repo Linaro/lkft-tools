@@ -20,6 +20,17 @@ def get_number(s):
         return None
 
 
+def is_superceded(version_ref, version_this):
+    if (
+        (version_ref["major"] == version_this["major"])
+        and (version_ref["minor"] == version_this["minor"])
+        and (version_ref["patch"] == version_this["patch"])
+        and (version_ref["rc"] > version_this["rc"])
+    ):
+        return True
+    return False
+
+
 if __name__ == "__main__":
     # Arguments
     ap = argparse.ArgumentParser()
@@ -147,10 +158,21 @@ if __name__ == "__main__":
 
         r = stable_email.Review(request_commit, None)
         date = r.get_date()
-        linux_ver = r.get_linux_version()
+        linux_ver_dict = r.get_linux_version_dict()
+        linux_ver = linux_ver_dict["str"]
+
+        replies = "Pending"
+
+        # See if this has been superceded
+        for in_msgid in from_greg.keys():
+            in_request_commit = from_greg[in_msgid]["request"]
+            in_r = stable_email.Review(in_request_commit, None)
+            in_linux_ver_dict = in_r.get_linux_version_dict()
+            if is_superceded(in_linux_ver_dict, linux_ver_dict):
+                replies = "Superceded"
+                break
 
         # Did we record any review replies?
-        replies = "Pending"
         if "replies" in from_greg[msgid]:
             replies = "Replied"
 
