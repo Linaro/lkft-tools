@@ -4,7 +4,6 @@
 import argparse
 import datetime
 import os
-import pytz
 import sys
 import re
 
@@ -13,7 +12,7 @@ import stable_email  # noqa: E402
 
 
 def get_number(s):
-    match = re.search("(\d+)", s)
+    match = re.search(r"(\d+)", s)
     if match:
         return int(match.group(1))
     else:
@@ -69,12 +68,12 @@ if __name__ == "__main__":
         "--since",
         help="Look as far as the given date (UTC).",
         type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d").replace(
-            tzinfo=pytz.utc
+            tzinfo=datetime.UTC
         ),
     )
     args = ap.parse_args()
 
-    NOW = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    NOW = datetime.datetime.now(datetime.UTC)
     if not args.since:
         limit = datetime.timedelta(days=args.days)
         DT_LIMIT = NOW - limit
@@ -84,8 +83,6 @@ if __name__ == "__main__":
     if args.action == "reply" and args.id:
         msg = stable_email.get_email_by_id(args.id, DT_LIMIT, git_dir=args.lore)
         email_date = msg["Date"]
-        # dt_email_date = datetime.datetime.strptime(email_date, "%c %z").replace(tzinfo=pytz.utc)
-        # formatted_date  = dt_email_date.strftime("%Y-%m-%d %H:%M:%S (UTC)", tzinfo=pytz.utc)
         email_from = msg["From"]
         email_to = msg["To"]
         email_cc = msg["Cc"]
@@ -136,7 +133,6 @@ if __name__ == "__main__":
         dt = commit.committed_datetime
         if dt < oldest:
             oldest = dt
-    # print("Oldest: %s" % oldest)
 
     # Look for replies to Greg's emails
     from_greg = stable_email.get_review_replies(oldest, from_greg, git_dir=args.lore)
@@ -174,17 +170,15 @@ if __name__ == "__main__":
 
         # Did we record any review replies?
         if "replies" in from_greg[msgid]:
-            replies = "Replied"
 
             # If so, complete the Review object
             for reply_msg in from_greg[msgid]["replies"]:
+                replies = "Replied"
                 r.reply = reply_msg
                 sla = r.get_sla_mark()
 
                 # Print summary
-                if not r.get_regressions_detected():
-                    replies = "Replied"
-                else:
+                if r.get_regressions_detected():
                     replies = "Regressions"
 
         print(
