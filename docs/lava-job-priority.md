@@ -18,24 +18,20 @@ requirements, and it fully takes advantage of having 101 priorities available.
 - 80:
   - stable-rc sanity jobs (all branches)
   - mainline sanity jobs
-- 79: [Developer builder](developer-builder.md) jobs
-- 78: stable branches which are not LTS (e.g. 5.x)
-- 77: stable branches which are not LTS (e.g. 5.x)
-- 76: stable-rc 5.10
-- 75: stable-rc 5.4
-- 74: stable-rc-4.19
-- 73: stable-rc-4.14
-- 72: stable-rc-4.9
-- 71: stable-rc-4.4
+  - next sanity jobs
+- 77: stable branches which are not LTS (e.g. 6.9)
+- 76: stable-rc 6.6
+- 75: stable-rc 6.1
+- 74: stable-rc 5.15
+- 73: stable-rc 5.10
+- 72: stable-rc 5.4
+- 71: stable-rc-4.19
 - 60: higher priority AOSP jobs
 - 50: AOSP jobs
 - 45: stable-rt and rt-devel jobs
 - 40: lower priority AOSP jobs
-- 30: linux-next sanity jobs
-- 26: linux-next regular jobs
-- 25:
-  - linux-mainline regular jobs
-  - lkft-staging jobs
+- 27: linux-next regular jobs
+- 27: linux-mainline regular jobs
 
 ## Design
 
