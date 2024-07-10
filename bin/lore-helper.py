@@ -13,7 +13,7 @@ import stable_email  # noqa: E402
 
 
 def get_number(s):
-    match = re.search("(\d+)", s)
+    match = re.search(r"(\d+)", s)
     if match:
         return int(match.group(1))
     else:
