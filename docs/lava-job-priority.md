@@ -63,44 +63,23 @@ the gitlab-ci/ directory. The easiest way to audit and observe them is with the
 following command (output abridged):
 
 ```sh
-drue@xps:~/src/configs$ grep -A1 PRIORITY *lkft*
-...
-openembedded-lkft-linux-stable-rc-4.4.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-4.4.yaml-            default: '71'
---
-openembedded-lkft-linux-stable-rc-4.4.yaml:            name: SANITY_LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-4.4.yaml-            default: '80'
---
-openembedded-lkft-linux-stable-rc-4.9.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-4.9.yaml-            default: '72'
---
-openembedded-lkft-linux-stable-rc-4.9.yaml:            name: SANITY_LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-4.9.yaml-            default: '80'
---
-openembedded-lkft-linux-stable-rc-4.14.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-4.14.yaml-            default: '73'
---
-openembedded-lkft-linux-stable-rc-4.14.yaml:            name: SANITY_LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-4.14.yaml-            default: '80'
-...
-openembedded-lkft-linux-stable-rc-4.19.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-4.19.yaml-            default: '74'
---
-openembedded-lkft-linux-stable-rc-4.19.yaml:            name: SANITY_LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-4.19.yaml-            default: '80'
---
-openembedded-lkft-linux-stable-rc-5.4.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-5.4.yaml-            default: '75'
---
-openembedded-lkft-linux-stable-rc-5.4.yaml:            name: SANITY_LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-5.4.yaml-            default: '80'
---
-openembedded-lkft-linux-stable-rc-5.7.yaml:            name: LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-5.7.yaml-            default: '78'
---
-openembedded-lkft-linux-stable-rc-5.7.yaml:            name: SANITY_LAVA_JOB_PRIORITY
-openembedded-lkft-linux-stable-rc-5.7.yaml-            default: '80'
---
-lkft-member-build.yaml:            name: TEST_LAVA_JOB_PRIORITY
-lkft-member-build.yaml-            default: 60
+drue@xps:~/src/pipelines/lkft-common$ git grep "^lava-job-priority" tuxconfig/*plan.yml
+tuxconfig/linux-4.19.y-plan.yml:lava-job-priority: &lava-job-priority 71
+tuxconfig/linux-4.19.y-plan.yml:lava-job-priority-sanity: &lava-job-priority-sanity 80
+tuxconfig/linux-5.10.y-plan.yml:lava-job-priority: &lava-job-priority 73
+tuxconfig/linux-5.10.y-plan.yml:lava-job-priority-sanity: &lava-job-priority-sanity 80
+tuxconfig/linux-5.15.y-plan.yml:lava-job-priority: &lava-job-priority 74
+tuxconfig/linux-5.15.y-plan.yml:lava-job-priority-sanity: &lava-job-priority-sanity 80
+tuxconfig/linux-5.4.y-plan.yml:lava-job-priority: &lava-job-priority 72
+tuxconfig/linux-5.4.y-plan.yml:lava-job-priority-sanity: &lava-job-priority-sanity 80
+tuxconfig/linux-6.1.y-plan.yml:lava-job-priority: &lava-job-priority 75
+tuxconfig/linux-6.1.y-plan.yml:lava-job-priority-sanity: &lava-job-priority-sanity 80
+tuxconfig/linux-6.6.y-plan.yml:lava-job-priority: &lava-job-priority 76
+tuxconfig/linux-6.6.y-plan.yml:lava-job-priority-sanity: &lava-job-priority-sanity 80
+tuxconfig/linux-6.9.y-plan.yml:lava-job-priority: &lava-job-priority 77
+tuxconfig/linux-6.9.y-plan.yml:lava-job-priority-sanity: &lava-job-priority-sanity 80
+tuxconfig/linux-tools-plan.yml:lava-job-priority: &lava-job-priority 77
+tuxconfig/linux-tools-plan.yml:lava-job-priority-sanity: &lava-job-priority-sanity 80
+tuxconfig/master-plan.yml:lava-job-priority: &lava-job-priority 27
+tuxconfig/master-plan.yml:lava-job-priority-sanity: &lava-job-priority-sanity 80
 ```
