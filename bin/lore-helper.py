@@ -4,7 +4,6 @@
 import argparse
 import datetime
 import os
-import pytz
 import sys
 import re
 
@@ -69,12 +68,12 @@ if __name__ == "__main__":
         "--since",
         help="Look as far as the given date (UTC).",
         type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d").replace(
-            tzinfo=pytz.utc
+            tzinfo=datetime.UTC
         ),
     )
     args = ap.parse_args()
 
-    NOW = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+    NOW = datetime.datetime.now(datetime.UTC)
     if not args.since:
         limit = datetime.timedelta(days=args.days)
         DT_LIMIT = NOW - limit
