@@ -68,12 +68,12 @@ if __name__ == "__main__":
         "--since",
         help="Look as far as the given date (UTC).",
         type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d").replace(
-            tzinfo=datetime.UTC
+            tzinfo=datetime.timezone.utc
         ),
     )
     args = ap.parse_args()
 
-    NOW = datetime.datetime.now(datetime.UTC)
+    NOW = datetime.datetime.now(datetime.timezone.utc)
     if not args.since:
         limit = datetime.timedelta(days=args.days)
         DT_LIMIT = NOW - limit
