@@ -170,17 +170,15 @@ if __name__ == "__main__":
 
         # Did we record any review replies?
         if "replies" in from_greg[msgid]:
-            replies = "Replied"
 
             # If so, complete the Review object
             for reply_msg in from_greg[msgid]["replies"]:
+                replies = "Replied"
                 r.reply = reply_msg
                 sla = r.get_sla_mark()
 
                 # Print summary
-                if not r.get_regressions_detected():
-                    replies = "Replied"
-                else:
+                if r.get_regressions_detected():
                     replies = "Regressions"
 
         print(
